@@ -1,5 +1,8 @@
 package com.poly.dao.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.poly.dao.FavoriteDAO;
 import com.poly.entity.Favorite;
 import com.poly.exception.AppException;
@@ -11,10 +14,10 @@ import jakarta.persistence.NoResultException;
 
 
 public class FavoriteDAOImpl implements FavoriteDAO{
-
 	@Override
 	public Favorite findByUserAndVideo(String userId, String videoId) {
 		EntityManager em = JpaUtil.getEntityManager();
+//		chỉ đọc, không cần transaction
 		try {
 			String jpql = "select f from Favorite f where "
 					+ "f.user.id = :uid and "
@@ -46,7 +49,7 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 	        }
 	        trans.commit();
 	    } catch (Exception e) {
-	        trans.rollback();
+	        if (trans.isActive()) trans.rollback();
 	        throw new AppException("Lỗi khi delete Favorite", e);
 	    } finally {
 	        em.close();
@@ -57,13 +60,13 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 	@Override
 	public void insert(Favorite newFav) {
 		EntityManager em = JpaUtil.getEntityManager();
+		EntityTransaction trans = em.getTransaction();
 	    try {
-	    	em.getTransaction().begin();
+	    	trans.begin();
 	        em.persist(newFav);
-	        em.getTransaction().commit();
+	        trans.commit();
 	    } catch (Exception e) {
-	        em.getTransaction().rollback();
-	        e.printStackTrace();
+	        if(trans.isActive()) trans.rollback();
 	        throw new AppException("Lỗi khi insert Favorite", e);
 	    } finally {
 	        em.close();

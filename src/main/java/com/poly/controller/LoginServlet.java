@@ -6,6 +6,7 @@ import org.mindrot.jbcrypt.BCrypt;
 
 import com.poly.entity.User;
 import com.poly.exception.AppException;
+import com.poly.exception.AppExceptionHandler;
 import com.poly.service.UserService;
 import com.poly.service.impl.UserServiceImpl;
 
@@ -81,15 +82,32 @@ public class LoginServlet extends HttpServlet {
 				int expiry = 7 * 24 * 60 * 60; // 7 ngày
 				cUser.setMaxAge(expiry);
 				cToken.setMaxAge(expiry);
+				cUser.setHttpOnly(true); 
+				cToken.setHttpOnly(true);
+
 
 				resp.addCookie(cUser);
 				resp.addCookie(cToken);
+			}else {
+				Cookie cUser = new Cookie("remember_username", "");
+			    Cookie cToken = new Cookie("remember_token", "");
+			    cUser.setMaxAge(0);
+			    cToken.setMaxAge(0);
+			    resp.addCookie(cUser);
+			    resp.addCookie(cToken);
 			}
 
+			String redirectUrl = (String) req.getSession().getAttribute("redirectBack");
+			if (redirectUrl != null) {
+				req.getSession().removeAttribute("redirectBack");
+				resp.sendRedirect(redirectUrl);
+				return;
+			}
 			resp.sendRedirect(req.getContextPath() + "/home");
 
 		} catch (Exception e) {
-			throw new AppException("Lỗi khi đăng nhập", e);
+			AppExceptionHandler.handle(req, resp, e, "lỗi khi đăng nhập");
+			return;
 		}
 	}
 }
