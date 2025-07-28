@@ -21,7 +21,25 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
+	<!-- ✅ Filter 1: AutoLoginFilter (chạy trước) -->
+    <filter>
+        <filter-name>AutoLoginFilter</filter-name>
+        <filter-class>com.poly.filter.AutoLoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AutoLoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
+    <!-- ✅ Filter 2: AuthFilter (chạy sau) -->
+    <filter>
+        <filter-name>AuthFilter</filter-name>
+        <filter-class>com.poly.filter.AuthFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
 
 </web-app>

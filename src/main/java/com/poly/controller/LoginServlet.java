@@ -48,7 +48,8 @@ public class LoginServlet extends HttpServlet {
 			}
 		}
 
-		req.getRequestDispatcher("/login.jsp").forward(req, resp);
+		req.setAttribute("view", "/WEB-INF/views/user/login.jsp");
+		req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 	}
 
 	@Override
@@ -62,7 +63,8 @@ public class LoginServlet extends HttpServlet {
 
 			if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
 				req.setAttribute("message", "Sai tài khoản hoặc mật khẩu");
-				req.getRequestDispatcher("/login.jsp").forward(req, resp);
+				req.setAttribute("view", "/WEB-INF/views/user/login.jsp");
+				req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 				return;
 			}
 

@@ -1,14 +1,17 @@
 package com.poly.controller;
 
 import java.io.IOException;
+
 import java.util.List;
 
+import com.poly.entity.User;
 import com.poly.entity.Video;
+import com.poly.service.FavoriteService;
 import com.poly.service.VideoService;
+import com.poly.service.impl.FavoriteServiceImpl;
 import com.poly.service.impl.VideoServiceImpl;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -20,6 +23,7 @@ public class HomeServlet extends HttpServlet{
 	 */
 	private static final long serialVersionUID = 1L;
 	private final VideoService videoService = new VideoServiceImpl();
+	private final FavoriteService favoriteService = new FavoriteServiceImpl();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -63,6 +67,24 @@ public class HomeServlet extends HttpServlet{
 		List<Video> popularVideos = videoService.getTop6PopularVideos();
 		List<Video> newVideos = videoService.getTop6LatestVideos();
 		List<Video> pagedVideos = videoService.getPage(page, size);
+		
+		User currentUser = (User) req.getSession().getAttribute("currentUser");
+		if(currentUser != null) {
+			for(Video v : popularVideos) {
+				boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), v.getId());
+				v.setLiked(liked);
+			}
+			
+			for(Video v : newVideos) {
+				boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), v.getId());
+				v.setLiked(liked);
+			}
+			
+			for(Video v : pagedVideos) {
+				boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), v.getId());
+				v.setLiked(liked);
+			}
+		}
 		
 		// Gửi dữ liệu xuống view
 		req.setAttribute("popularVideos", popularVideos);

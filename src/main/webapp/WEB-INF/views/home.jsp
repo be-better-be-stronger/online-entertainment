@@ -17,8 +17,13 @@
 							href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
 					</h5>
 					<p>Lượt xem: ${v.views}</p>
+					<p>
+						Ngày đăng:
+						<fmt:formatDate value="${v.createdDate}"
+							pattern="dd/MM/yyyy HH:mm" />
+					</p>
 					<!-- Form Like -->
-					<form action="${pageContext.request.contextPath}/like"
+					<form action="${pageContext.request.contextPath}/video/like"
 						method="post">
 						<input type="hidden" name="videoId" value="${v.id}" />
 						<button type="submit"
@@ -43,14 +48,22 @@
 				</a>
 				<div class="card-body">
 					<h5>
-						<a
-							href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
+						<a href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
 					</h5>
+					<p>Lượt xem: ${v.views}</p>
 					<p>
 						Ngày đăng:
 						<fmt:formatDate value="${v.createdDate}"
 							pattern="dd/MM/yyyy HH:mm" />
 					</p>
+					<!-- Form Like -->
+					<form action="${pageContext.request.contextPath}/video/like"
+						method="post">
+						<input type="hidden" name="videoId" value="${v.id}" />
+						<button type="submit"
+							class="btn ${v.liked ? 'btn-danger' : 'btn-outline-danger'}">
+							${v.liked ? '❤️ Đã thích' : '🤍 Thích'}</button>
+					</form>
 				</div>
 			</div>
 		</div>
@@ -81,7 +94,20 @@
 						<a
 							href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
 					</h5>
-					<p class="card-text text-muted">${v.views}lượtxem</p>
+					<p>Lượt xem: ${v.views}</p>
+					<p>
+						Ngày đăng:
+						<fmt:formatDate value="${v.createdDate}"
+							pattern="dd/MM/yyyy HH:mm" />
+					</p>
+					<!-- Form Like -->
+					<form action="${pageContext.request.contextPath}/video/like"
+						method="post">
+						<input type="hidden" name="videoId" value="${v.id}" />
+						<button type="submit"
+							class="btn ${v.liked ? 'btn-danger' : 'btn-outline-danger'}">
+							${v.liked ? '❤️ Đã thích' : '🤍 Thích'}</button>
+					</form>
 				</div>
 			</div>
 		</div>

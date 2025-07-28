@@ -27,6 +27,8 @@ public class LikeServlet extends HttpServlet{
 	protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 	    String videoId = req.getParameter("videoId");
 	    User user = (User) req.getSession().getAttribute("currentUser");
+	    System.out.println(">>> Current user: " + user);
+
 	    if (user == null) {
             resp.sendRedirect(req.getContextPath() + "/login");
             return;
