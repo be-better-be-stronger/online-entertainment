@@ -71,6 +71,7 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
         EntityManager em = JpaUtil.getEntityManager();
         try {
         	log.debug("[DAO] Đếm tổng số video trong hệ thống");
+        	String jpql = "SELECT COUNT(v) FROM Video v";
             return em.createQuery(jpql, Long.class).getSingleResult();
         } catch (Exception e) {
 			logDaoError("đếm tổng số video", e);
