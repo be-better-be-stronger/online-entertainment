@@ -15,7 +15,7 @@ http://xmlns.jcp.org/xml/ns/persistence/persistence_2_1.xsd">
 				
 			<!-- TỰ ĐỘNG TẠO / CẬP NHẬT TABLE -->
             <property name="jakarta.persistence.schema-generation.database.action" value="update"/>
-			<property name="hibernate.show_sql" value="true" />
+			<property name="hibernate.show_sql" value="false" />
 			<property name="hibernate.format_sql" value="true" />
 			<property name="hibernate.use_sql_comments" value="true"/>
 		</properties>

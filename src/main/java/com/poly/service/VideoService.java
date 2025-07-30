@@ -10,4 +10,5 @@ public interface VideoService {
 	long getTotalVideos();
 	List<Video> getPage(int page, int size);
 	Video getVideoById(String id);
+	void updateVideo(Video video);
 }

@@ -2,14 +2,19 @@ package com.poly.dao.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.poly.dao.VideoDAO;
+import com.poly.dao.base.BaseDAOImpl;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.utils.JpaUtil;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceException;
 
-public class VideoDAOImpl implements VideoDAO {
+public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
 
     @Override
     public List<Video> findTop6ByViews() {
@@ -84,16 +89,24 @@ public class VideoDAOImpl implements VideoDAO {
     @Override
     public Video findById(String id) {
         EntityManager em = JpaUtil.getEntityManager();
-        try {
-        	System.out.println("----------------------------");
-        	System.out.println("MySQL:\nSELECT * FROM videos WHERE id = '" + id + "'");
+        try {            
+            log.debug("[DAO] Tìm video với ID = {}", id);
             return em.find(Video.class, id);
-        } catch(Exception e) {
-        	throw new AppException("Lỗi khi truy vấn video với ID: " + id, e);
+        } catch (PersistenceException e) {
+            log.error("[DAO ERROR] Lỗi truy vấn DB khi tìm video: {}", id);
+            log.error("Lỗi lớp: {}", e.getClass().getName());
+//            log.error("Chi tiết:", e);
+            throw new AppException("Lỗi truy vấn DB với video ID: " + id);
+        } catch (Exception e) {
+            log.error("[DAO ERROR] Lỗi không xác định khi tìm video: {}", id);
+            log.error("Lỗi lớp: {}", e.getClass().getName());
+//            log.error("Chi tiết:", e);
+            throw new AppException("Lỗi không xác định khi tìm video ID: " + id, e);
         } finally {
             em.close();
         }
     }
+
 
     @Override
     public void create(Video video) {

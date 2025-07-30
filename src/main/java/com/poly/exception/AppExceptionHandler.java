@@ -1,23 +1,27 @@
 package com.poly.exception;
 
-import java.util.logging.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
+
 import jakarta.servlet.http.*;
 
 public class AppExceptionHandler {
-    private static final Logger logger = Logger.getLogger(AppExceptionHandler.class.getName());
+    private static final Logger logger = LoggerFactory.getLogger(AppExceptionHandler.class.getName());
 
     public static void handle(HttpServletRequest req, HttpServletResponse resp, Exception ex, String action) {
         try {
-            // Ghi log chi tiết
-            logger.log(Level.SEVERE, "Lỗi khi: " + action, ex);
+        	// Ghi log gọn gàng
+            logger.error("❌ Lỗi khi: {}", action);
+            logger.error("📄 Chi tiết lỗi: {}", ex.getMessage());
 
             // Truyền thông báo lỗi xuống JSP
             req.setAttribute("errorMessage", "Đã xảy ra lỗi khi " + action + ": " + ex.getMessage());
             req.setAttribute("view", "/WEB-INF/views/error.jsp");
             req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
         } catch (Exception handlerEx) {
-            // Nếu cả xử lý lỗi cũng lỗi 😅
-            logger.log(Level.SEVERE, "Lỗi khi xử lý lỗi!", handlerEx);
+        	logger.error("‼️ Lỗi khi xử lý ngoại lệ!", handlerEx); // vẫn cho phép trace nếu xử lý lỗi cũng lỗi 
         }
     }
 

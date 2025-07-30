@@ -40,4 +40,9 @@ public class VideoServiceImpl implements VideoService{
 		return video;
 	}
 
+	@Override
+	public void updateVideo(Video video) {
+		videoDAO.update(video);		
+	}
+
 }

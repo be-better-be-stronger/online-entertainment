@@ -14,7 +14,7 @@ public abstract class BaseDAOImpl {
 	protected  void logDaoError(String action, Exception e, Object... params) {       
         log.error("❌ Lỗi [{}] - Params: {}", action, params, e);
         log.error("Lỗi lớp: {}", e.getClass().getName());
-        log.error("Chi tiết:", e);
+//        log.error("Chi tiết:", e);
     }
 	
 	// Helper để lấy EntityManager

@@ -5,7 +5,7 @@
 <c:url var="baseUrl" value="/favorites"/>
 
 <h2>❤️ Danh sách Video Yêu Thích</h2>
-<c:if test="empty favorites">
+<c:if test="${empty favorites}">
 	<p>Không có video nào được yêu thích</p>
 </c:if>
 
