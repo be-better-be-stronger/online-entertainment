@@ -1,13 +1,40 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN">
-  <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="[%d{HH:mm:ss}] [%level] %c - %msg%n" />
-    </Console>
-  </Appenders>
-  <Loggers>
-    <Root level="debug">
-      <AppenderRef ref="Console" />
-    </Root>
-  </Loggers>
+	<Appenders>
+		<!-- Console -->
+		<Console name="Console" target="SYSTEM_OUT">
+			<PatternLayout
+				pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%level] %c - %msg%n" />
+		</Console>
+
+		<!-- Rolling file log -->
+		<RollingFile name="FileLog"
+			fileName="${sys:catalina.base}/logs/app.log"
+			filePattern="${sys:catalina.base}/logs/app-%d{yyyy-MM-dd}-%i.log.gz">
+			<PatternLayout
+				pattern="[%d{yyyy-MM-dd HH:mm:ss}] [%level] %c - %msg%n" />
+			<Policies>
+				<TimeBasedTriggeringPolicy />
+				<SizeBasedTriggeringPolicy size="10MB" />
+			</Policies>
+			<DefaultRolloverStrategy max="10" />
+		</RollingFile>
+	</Appenders>
+
+	<Loggers>
+		<!-- Chỉ định log cho code -->
+		<Logger name="com.poly" level="debug" additivity="false">
+			<AppenderRef ref="Console" />
+			<AppenderRef ref="FileLog" />
+		</Logger>
+
+		<!-- Thư viện ngoài giữ ở WARN để tránh rác -->
+		<Logger name="org.hibernate" level="warn" />
+		<Logger name="jakarta.persistence" level="warn" />
+
+		<!-- Root logger -->
+		<Root level="error">
+			<AppenderRef ref="Console" />
+		</Root>
+	</Loggers>
 </Configuration>

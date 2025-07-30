@@ -1,6 +1,7 @@
 package com.poly.service.impl;
 
 import java.util.Date;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,8 +27,15 @@ public class FavoriteServiceImpl implements FavoriteService{
 	private final VideoDAO videoDAO = new VideoDAOImpl();
 	
 	
+	
+	
 	/**
-	 * @return true nếu đã like, false nếu đã unlike
+	 * Thay đổi trạng thái yêu thích của video cho người dùng. Nếu đã like thì bỏ like, nếu chưa thì thêm like.
+	 *
+	 * @param userId ID của người dùng
+	 * @param videoId ID của video
+	 * @return true nếu sau khi thực hiện thì video được like, false nếu bị unlike
+	 * @throws AppException nếu user hoặc video không tồn tại, hoặc lỗi hệ thống khi insert
 	 */
 	@Override
 	public boolean toggleLike(String userId, String videoId) {
@@ -45,9 +53,8 @@ public class FavoriteServiceImpl implements FavoriteService{
 //		    	System.out.println("[TOGGLE] Chưa yêu thích, đang thực hiện insert.");
 		        Favorite newFav = new Favorite();
 		        User user = userDAO.findById(userId);
-		        if(user == null) throw new AppException("User không tồn tại");
 		        Video video = videoDAO.findById(videoId);
-		        if(video == null) throw new AppException("Video không tồn tại");
+		        validateEntities(user, video);
 		        newFav.setUser(user);
 		        newFav.setVideo(video);
 		        newFav.setLikeDate(new Date());
@@ -56,10 +63,10 @@ public class FavoriteServiceImpl implements FavoriteService{
 //		        System.out.println("[TOGGLE] Xử lý xong.");
 		        return true;
 			} catch (AppException e) {
-			    log.error("AppException khi insert Favorite: user={}, video={}", userId, videoId, e);
+			    logInsertError(userId, videoId, e);
 			    throw e;
 			} catch (Exception e) {
-			    log.error("Lỗi hệ thống khi insert Favorite: user={}, video={}", userId, videoId, e);
+			    logInsertError(userId, videoId, e);
 			    throw new AppException("Lỗi hệ thống khi insert Favorite", e);
 			}
 
@@ -69,6 +76,25 @@ public class FavoriteServiceImpl implements FavoriteService{
 	@Override
 	public boolean isVideoLikedByUser(String userId, String videoId) {
 		return favoriteDAO.findByUserAndVideo(userId, videoId) != null;
+	}
+	
+	private void validateEntities(User user, Video video) {
+		if(user == null) throw new AppException("User không tồn tại");
+		if(video == null) throw new AppException("Video không tồn tại");
+	}
+	
+	private void logInsertError(String userId, String videoId, Exception e) {
+		log.error("Lỗi khi insert Favorite: user={}, video={}", userId, videoId, e);
+	}
+
+	@Override
+	public List<Video> findFavoritesByUser(String userId, int page, int size) {
+		return favoriteDAO.findFavoriteVideosByUser(userId, page, size);
+	}
+
+	@Override
+	public long countFavoritesByUser(String userId) {
+		return favoriteDAO.countFavoritesByUser(userId);
 	}
 
 }

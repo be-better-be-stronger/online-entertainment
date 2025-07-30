@@ -9,7 +9,7 @@ public class AppExceptionHandler {
     public static void handle(HttpServletRequest req, HttpServletResponse resp, Exception ex, String action) {
         try {
             // Ghi log chi tiết
-            logger.log(Level.SEVERE, "Lỗi khi thực hiện: " + action, ex);
+            logger.log(Level.SEVERE, "Lỗi khi: " + action, ex);
 
             // Truyền thông báo lỗi xuống JSP
             req.setAttribute("errorMessage", "Đã xảy ra lỗi khi " + action + ": " + ex.getMessage());

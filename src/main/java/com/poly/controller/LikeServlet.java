@@ -34,7 +34,7 @@ public class LikeServlet extends HttpServlet{
             return;
         }
 	    try {
-	        favoriteService.toggleLike(user.getId(), videoId);
+	        favoriteService.toggleLike(videoId, videoId);
 	        // Quay về trang trước đó
 	        String referer = req.getHeader("referer");
 	        resp.sendRedirect(referer != null ? referer : req.getContextPath() + "/home");
