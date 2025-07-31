@@ -28,9 +28,6 @@ public class ShareVideoServlet extends HttpServlet{
 
 	private static final long serialVersionUID = 1L;
 	
-	private static final String USERNAME = "your_email@gmail.com";
-	private static final String APP_PASSWORD = "your_app_password";
-	
 	private final ShareService shareService;
 	private final VideoService videoService;
 	private final MailService mailService;
@@ -39,7 +36,7 @@ public class ShareVideoServlet extends HttpServlet{
 		this(
 				new ShareServiceImpl(new ShareDAOImpl()),
 				new VideoServiceImpl(new VideoDAOImpl()),
-				new MailServiceImpl(USERNAME, APP_PASSWORD)
+				new MailServiceImpl()
 		);
 	}
 	

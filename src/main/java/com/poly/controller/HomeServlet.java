@@ -97,6 +97,9 @@ public class HomeServlet extends HttpServlet{
 			}
 		}
 		
+		System.out.println("catalina.base = " + System.getProperty("catalina.base"));
+
+		
 		// Gửi dữ liệu xuống view
 		req.setAttribute("popularVideos", popularVideos);
 		req.setAttribute("newVideos", newVideos);

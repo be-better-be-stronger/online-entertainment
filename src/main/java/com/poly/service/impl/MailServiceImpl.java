@@ -4,6 +4,7 @@ package com.poly.service.impl;
 import java.util.Properties;
 
 import com.poly.service.MailService;
+import com.poly.utils.MailConfigLoader;
 
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
@@ -18,9 +19,9 @@ public class MailServiceImpl implements MailService{
 	private final String username;
 	private final String appPassword;
 	
-	public MailServiceImpl(String username, String password) {
-		this.username = username;
-		this.appPassword = password;
+	public MailServiceImpl() {
+		this.username = MailConfigLoader.getUsername();
+		this.appPassword = MailConfigLoader.getPassword();
 	}
 	@Override
 	public void send(String to, String subject, String htmlContent) 
@@ -40,8 +41,7 @@ public class MailServiceImpl implements MailService{
 		
 		Message message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(username));
-		message.setRecipients(Message.RecipientType.TO, 
-				InternetAddress.parse(to));
+		message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
 		message.setSubject(subject);
 		message.setContent(htmlContent, "text/html; charset=UTF-8");
 		
