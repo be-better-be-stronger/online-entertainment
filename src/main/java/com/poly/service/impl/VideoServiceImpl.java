@@ -6,15 +6,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.poly.dao.VideoDAO;
-import com.poly.dao.impl.VideoDAOImpl;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.service.VideoService;
 
+
 public class VideoServiceImpl implements VideoService{
 	
 	private static final Logger log = LoggerFactory.getLogger(VideoServiceImpl.class);
-	private VideoDAO videoDAO = new VideoDAOImpl();
+	private final VideoDAO videoDAO;
+	
+	public VideoServiceImpl (VideoDAO videoDAO) {
+		this.videoDAO = videoDAO;
+	}
 
 	@Override
 	public List<Video> getTop6PopularVideos() {
@@ -49,6 +53,12 @@ public class VideoServiceImpl implements VideoService{
 	@Override
 	public void updateVideo(Video video) {
 		videoDAO.update(video);		
+	}
+	
+	@Override
+	public void increaseViews(String videoId) {
+		log.debug("[SERVICE] Tăng lượt xem cho video ID = {}", videoId);
+	    videoDAO.increaseViews(videoId);
 	}
 
 }

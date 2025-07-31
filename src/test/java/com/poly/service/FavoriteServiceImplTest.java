@@ -1,4 +1,4 @@
-package com.poly.service.impl;
+package com.poly.service;
 
 public class FavoriteServiceImplTest {
 

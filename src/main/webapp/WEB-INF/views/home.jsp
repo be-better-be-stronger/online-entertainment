@@ -7,31 +7,8 @@
 <div class="row">
 	<c:forEach var="v" items="${popularVideos}">
 		<div class="col-md-4">
-			<div class="card mb-3">
-				<a href="${pageContext.request.contextPath}/video-detail?id=${v.id}">
-					<img src="images/${v.poster}" class="card-img-top">
-				</a>
-				<div class="card-body">
-					<h5>
-						<a
-							href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
-					</h5>
-					<p>Lượt xem: ${v.views}</p>
-					<p>
-						Ngày đăng:
-						<fmt:formatDate value="${v.createdDate}"
-							pattern="dd/MM/yyyy HH:mm" />
-					</p>
-					<!-- Form Like -->
-					<form action="${pageContext.request.contextPath}/video/like"
-						method="post">
-						<input type="hidden" name="videoId" value="${v.id}" />
-						<button type="submit"
-							class="btn ${v.liked ? 'btn-danger' : 'btn-outline-danger'}">
-							${v.liked ? '❤️ Đã thích' : '🤍 Thích'}</button>
-					</form>
-				</div>
-			</div>
+			<c:set var="v" value="${v }" scope="request" />
+			<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
 		</div>
 	</c:forEach>
 </div>
@@ -42,30 +19,8 @@
 <div class="row">
 	<c:forEach var="v" items="${newVideos}">
 		<div class="col-md-4">
-			<div class="card mb-3">
-				<a href="${pageContext.request.contextPath}/video-detail?id=${v.id}">
-					<img src="images/${v.poster}" class="card-img-top">
-				</a>
-				<div class="card-body">
-					<h5>
-						<a href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
-					</h5>
-					<p>Lượt xem: ${v.views}</p>
-					<p>
-						Ngày đăng:
-						<fmt:formatDate value="${v.createdDate}"
-							pattern="dd/MM/yyyy HH:mm" />
-					</p>
-					<!-- Form Like -->
-					<form action="${pageContext.request.contextPath}/video/like"
-						method="post">
-						<input type="hidden" name="videoId" value="${v.id}" />
-						<button type="submit"
-							class="btn ${v.liked ? 'btn-danger' : 'btn-outline-danger'}">
-							${v.liked ? '❤️ Đã thích' : '🤍 Thích'}</button>
-					</form>
-				</div>
-			</div>
+			<c:set var="v" value="${v }" scope="request" />
+			<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
 		</div>
 	</c:forEach>
 </div>
@@ -85,31 +40,8 @@
 
 	<c:forEach var="v" items="${videos}">
 		<div class="col-md-4 mb-4">
-			<div class="card h-100 shadow-sm">
-				<a href="${pageContext.request.contextPath}/video-detail?id=${v.id}">
-					<img src="images/${v.poster}" class="card-img-top">
-				</a>
-				<div class="card-body">
-					<h5 class="card-title">
-						<a
-							href="${pageContext.request.contextPath}/video-detail?id=${v.id}">${v.title}</a>
-					</h5>
-					<p>Lượt xem: ${v.views}</p>
-					<p>
-						Ngày đăng:
-						<fmt:formatDate value="${v.createdDate}"
-							pattern="dd/MM/yyyy HH:mm" />
-					</p>
-					<!-- Form Like -->
-					<form action="${pageContext.request.contextPath}/video/like"
-						method="post">
-						<input type="hidden" name="videoId" value="${v.id}" />
-						<button type="submit"
-							class="btn ${v.liked ? 'btn-danger' : 'btn-outline-danger'}">
-							${v.liked ? '❤️ Đã thích' : '🤍 Thích'}</button>
-					</form>
-				</div>
-			</div>
+			<c:set var="v" value="${v }" scope="request" />
+			<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
 		</div>
 	</c:forEach>
 </div>

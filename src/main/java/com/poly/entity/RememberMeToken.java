@@ -18,6 +18,7 @@ public class RememberMeToken {
     private String token;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "expiry_date")
     private Date expiryDate;
 
 	public Long getId() {

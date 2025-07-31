@@ -2,8 +2,10 @@ package com.poly.dao.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.poly.dao.VideoDAO;
-import com.poly.dao.base.BaseDAOImpl;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.utils.JpaUtil;
@@ -12,8 +14,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.PersistenceException;
 
-public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
-
+public class VideoDAOImpl implements VideoDAO {
+	private final Logger log = LoggerFactory.getLogger(VideoDAOImpl.class);
     @Override
     public List<Video> findTop6ByViews() {
         EntityManager em = JpaUtil.getEntityManager();
@@ -23,8 +25,7 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
             return em.createQuery(jpql, Video.class).setMaxResults(6)
             		.getResultList();           
         } catch (Exception e) {
-			logDaoError("lấy top 6 video có lượt xem cao nhất", e);
-			throw new AppException("Không thể truy vấn top 6 video phổ biến", e);
+			throw new AppException("truy vấn top 6 video phổ biến", e);
 		} finally {
             em.close();
         }
@@ -40,8 +41,7 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
 			return em.createQuery(jpql, Video.class).setMaxResults(6)
 					.getResultList();
 		}catch (Exception e) {
-			logDaoError("lấy top 6 video mới nhất", e);
-			throw new AppException("Không thể truy vấn top 6 video mới nhất", e);
+			throw new AppException("truy vấn top 6 video mới nhất", e);
 		} finally {
 			em.close();
 		}
@@ -59,8 +59,7 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
                      .setMaxResults(size)
                      .getResultList();
         } catch (Exception e) {
-			logDaoError("phân trang danh sách video", e, page, size);
-			throw new AppException("Không thể truy vấn danh sách video theo trang", e);
+			throw new AppException("truy vấn danh sách video theo trang", e);
 		} finally {
             em.close();
         }
@@ -74,8 +73,7 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
         	String jpql = "SELECT COUNT(v) FROM Video v";
             return em.createQuery(jpql, Long.class).getSingleResult();
         } catch (Exception e) {
-			logDaoError("đếm tổng số video", e);
-			throw new AppException("Không thể đếm tổng số video", e);
+			throw new AppException("đếm tổng số video", e);
 		} finally {
             em.close();
         }
@@ -88,10 +86,8 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
             log.debug("[DAO] Tìm video với ID = {}", id);
             return em.find(Video.class, id);
         } catch (PersistenceException e) {
-            logDaoError("truy vấn DB khi tìm video", e, id);
-            throw new AppException("Lỗi truy vấn DB với video ID: " + id);
+            throw new AppException("truy vấn DB với video ID: " + id);
         } catch (Exception e) {
-	        logDaoError("không xác định khi tìm video ID: ", e, id);
             throw new AppException("Lỗi không xác định khi tìm video ID: " + id, e);
         } finally {
             em.close();
@@ -110,7 +106,6 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
             trans.commit();
         } catch (Exception e) {
             if(trans.isActive()) trans.rollback();
-            logDaoError("thêm video mới", e, video.getId());
             throw new AppException("Không thể thêm video mới", e);
         } finally {
             em.close();
@@ -128,7 +123,6 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
             trans.commit();
         } catch (Exception e) {
             if(trans.isActive()) trans.rollback();
-            logDaoError("cập nhật video", e, video.getId());
             throw new AppException("Không thể cập nhật video", e);
         } finally {
             em.close();
@@ -149,12 +143,39 @@ public class VideoDAOImpl extends BaseDAOImpl implements VideoDAO {
             trans.commit();
         } catch (Exception e) {
             trans.rollback();
-            logDaoError("xóa video", e, id);
             throw new AppException("Không thể xóa video", e);
         } finally {
             em.close();
         }
     }
+
+    @Override
+    public void increaseViews(String videoId) {
+        EntityManager em = JpaUtil.getEntityManager();
+        EntityTransaction trans = em.getTransaction();
+
+        try {
+            log.debug("[DAO] Tăng lượt xem video với ID: {}", videoId);
+            trans.begin();
+
+            Video video = em.find(Video.class, videoId);
+            if (video == null) {
+                throw new AppException("Không tìm thấy video để tăng views");
+            }
+
+            video.setViews(video.getViews() + 1);
+            em.merge(video);
+
+            trans.commit();
+            log.info("[DAO] +1 view cho video '{}'. Tổng: {}", video.getTitle(), video.getViews());
+        } catch (Exception e) {
+            if (trans.isActive()) trans.rollback();
+            throw new AppException("tăng lượt xem video", e);
+        } finally {
+            em.close();
+        }
+    }
+
 
 	
 }

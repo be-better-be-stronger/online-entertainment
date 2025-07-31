@@ -2,10 +2,10 @@ package com.poly.dao.impl;
 
 import java.util.List;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.poly.dao.FavoriteDAO;
-import com.poly.dao.base.BaseDAOImpl;
 import com.poly.entity.Favorite;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
@@ -16,7 +16,8 @@ import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 
 
-public class FavoriteDAOImpl extends BaseDAOImpl implements FavoriteDAO{
+public class FavoriteDAOImpl implements FavoriteDAO{
+	private final Logger log = LoggerFactory.getLogger(FavoriteDAOImpl.class);
 	
 	
 	/**
@@ -47,8 +48,7 @@ public class FavoriteDAOImpl extends BaseDAOImpl implements FavoriteDAO{
 		}catch (NoResultException e) {
 			return null;		
 		}catch (Exception e) {
-			logDaoError("Tìm Favorite theo user + video", e, userId, videoId);
-			throw new AppException("Không thể truy vấn favorite", e);
+			throw new AppException("truy vấn favorite", e);
 		}finally {
 			em.close();
 		}
@@ -71,7 +71,6 @@ public class FavoriteDAOImpl extends BaseDAOImpl implements FavoriteDAO{
 	        
 	    } catch (Exception e) {
 	        if (trans.isActive()) trans.rollback();
-	        logDaoError("Xoá Favorite", e, id);
 	        throw new AppException("Không thể xóa favorite", e);
 	    } finally {
 	        em.close();
@@ -90,7 +89,6 @@ public class FavoriteDAOImpl extends BaseDAOImpl implements FavoriteDAO{
 	        log.debug("Insert favorite thành công: {}", newFav);
 	    } catch (Exception e) {
 	        if(trans.isActive()) trans.rollback();
-	        logDaoError("Insert Favorite", e, newFav);
 	        throw new AppException("Không thể insert favorite", e);
 	    } finally {
 	        em.close();
@@ -111,7 +109,6 @@ public class FavoriteDAOImpl extends BaseDAOImpl implements FavoriteDAO{
 					.setMaxResults(size)
 					.getResultList();
 		}catch (Exception e) {
-			logDaoError("Phân trang video yêu thích", e, userId, page, size);
 	        throw new AppException("Không thể truy vấn danh sách video yêu thích", e);
 	    }  finally {
 			em.close();
@@ -129,7 +126,6 @@ public class FavoriteDAOImpl extends BaseDAOImpl implements FavoriteDAO{
 								.setParameter("uid", userId)
 								.getSingleResult();
 		}catch (Exception e) {
-			logDaoError("Đếm video yêu thích", e, userId);
 			throw new AppException("Không thể đếm video yêu thích", e);
 		} finally {
 			em.close();

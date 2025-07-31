@@ -12,17 +12,8 @@
 <ul>
 	  <c:forEach var="v" items="${favorites }">
 	  		<li>
-	  			<a href="${pageContext.request.contextPath}/video-detail?id=${v.id}">	  				
-	  				<img src="${pageContext.request.contextPath}/images/${v.poster}" alt="${v.title}" width="150" /> <br>
-	  				<strong>${v.title }</strong>
-	  			</a><br>
-	  			Lượt xem: ${v.views } <br>
-	  			Ngày đăng: 
-	  			<fmt:formatDate value="${v.createdDate }" pattern="dd/MM/yyyy HH:mm"/> <br/><br/>
-	  			<form action="${pageContext.request.contextPath}/video/like" method="post" style="display:inline;">
-	                <input type="hidden" name="videoId" value="${v.id}" />
-	                <button type="submit">❌ Xóa khỏi danh sách yêu thích</button>
-	            </form>
+	  			<c:set var="v" value="${v }" scope="request" />
+				<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
 	  		</li>
 	  		<hr>
 	  </c:forEach>

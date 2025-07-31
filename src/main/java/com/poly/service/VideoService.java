@@ -57,4 +57,6 @@ public interface VideoService {
      * @throws AppException nếu xảy ra lỗi khi cập nhật
      */
 	void updateVideo(Video video);
+	
+	void increaseViews(String videoId);
 }

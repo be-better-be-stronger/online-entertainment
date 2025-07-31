@@ -9,7 +9,8 @@ public class JpaUtil {
 
     static {
         try {
-            factory = Persistence.createEntityManagerFactory("OE"); // Tên PU trong persistence.xml
+        	String unitName = detectTestMode() ? "testOE" : "OE";
+            factory = Persistence.createEntityManagerFactory(unitName); 
         } catch (Exception e) {
             System.err.println("Initial EntityManagerFactory creation failed." + e);
             throw new ExceptionInInitializerError(e);
@@ -24,5 +25,9 @@ public class JpaUtil {
     // Đóng EMF khi ứng dụng shutdown
     public static void close() {
         factory.close();
+    }
+    
+    private static boolean detectTestMode() {
+        return System.getProperty("app.env", "prod").equals("test");
     }
 }

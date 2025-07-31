@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.poly.dao.VideoDAO;
+import com.poly.dao.impl.VideoDAOImpl;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.exception.AppExceptionHandler;
@@ -19,7 +21,14 @@ import jakarta.servlet.http.*;
 public class VideoDetailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(VideoDetailServlet.class);
-	private final VideoService videoService = new VideoServiceImpl();
+	
+	private final VideoService videoService;
+
+	public VideoDetailServlet() {
+		// 👇 Inject VideoDAO vào Service theo đúng constructor
+		VideoDAO videoDAO = new VideoDAOImpl();
+		this.videoService = new VideoServiceImpl(videoDAO);
+	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -37,21 +46,16 @@ public class VideoDetailServlet extends HttpServlet {
 			log.debug("[PROCESS] Tìm video và tăng lượt xem...");
 		    Video video = videoService.getVideoById(id);
 		    
-		    log.debug("[VIEW] Video '{}' hiện có {} lượt xem", video.getTitle(), video.getViews());
-		    video.setViews(video.getViews() + 1);
-		    videoService.updateVideo(video);
-		    log.info("[VIEW] +1 view cho video '{}'. Tổng views: {}", video.getTitle(), video.getViews());
+		    videoService.increaseViews(id); 
+			log.info("[VIEW] +1 view cho video '{}'", video.getTitle());
+			
 		    req.setAttribute("video", video);
 		    req.setAttribute("view", "/WEB-INF/views/user/video-detail.jsp");
 		    req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 		} catch (AppException ex) {
-			log.error("[APP ERROR] {}", ex.getMessage());
-			log.error("Lỗi lớp: {}", ex.getClass().getName());
-		    AppExceptionHandler.handle(req, resp, ex, "xem chi tiết video");
+		    AppExceptionHandler.handle(req, resp, ex);
 		}catch (Exception e) {
-            log.error("[UNCAUGHT ERROR] {}", e.getMessage());
-            log.error("Lỗi lớp: {}", e.getClass().getName());
-            AppExceptionHandler.handle(req, resp, e, "lỗi không xác định khi xem video");
+            AppExceptionHandler.handle(req, resp, e);
         }
 
 	}

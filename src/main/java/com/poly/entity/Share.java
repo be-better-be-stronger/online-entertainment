@@ -20,7 +20,7 @@ public class Share {
     private Video video;
 
     @Column(columnDefinition = "TEXT")
-    private String emails;
+    private String email;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "share_date", insertable = false, updatable = false)
@@ -50,12 +50,12 @@ public class Share {
 		this.video = video;
 	}
 
-	public String getEmails() {
-		return emails;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setEmails(String emails) {
-		this.emails = emails;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	public Date getShareDate() {

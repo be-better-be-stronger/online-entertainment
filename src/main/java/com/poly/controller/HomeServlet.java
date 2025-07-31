@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import java.util.List;
 
+import com.poly.dao.VideoDAO;
+import com.poly.dao.impl.VideoDAOImpl;
 import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.service.FavoriteService;
@@ -22,8 +24,17 @@ public class HomeServlet extends HttpServlet{
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private final VideoService videoService = new VideoServiceImpl();
+
 	private final FavoriteService favoriteService = new FavoriteServiceImpl();
+	
+	private final VideoService videoService;
+
+	public HomeServlet() {
+		// 👇 Inject VideoDAO vào Service theo đúng constructor
+		VideoDAO videoDAO = new VideoDAOImpl();
+		this.videoService = new VideoServiceImpl(videoDAO);
+	}
+
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

@@ -34,12 +34,12 @@ public class LikeServlet extends HttpServlet{
             return;
         }
 	    try {
-	        favoriteService.toggleLike(videoId, videoId);
+	        favoriteService.toggleLike(user.getId(), videoId);
 	        // Quay về trang trước đó
 	        String referer = req.getHeader("referer");
 	        resp.sendRedirect(referer != null ? referer : req.getContextPath() + "/home");
 	    } catch (AppException ex) {
-	        AppExceptionHandler.handle(req, resp, ex, "xử lý like video");
+	        AppExceptionHandler.handle(req, resp, ex);
 	        return;
 	    }
 

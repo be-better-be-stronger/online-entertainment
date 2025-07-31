@@ -1,6 +1,7 @@
 package com.poly.controller;
 
 import java.io.IOException;
+import java.util.Iterator;
 import java.util.List;
 
 import com.poly.entity.User;
@@ -41,6 +42,10 @@ public class FavoritesServlet extends HttpServlet {
 		}
 		
 		List<Video> favorites = favoriteService.findFavoritesByUser(currentUser.getId(), page, size);
+		for(Video f : favorites) {
+			boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), f.getId());
+			f.setLiked(liked);
+		}
 		long totalItems = favoriteService.countFavoritesByUser(currentUser.getId());
 		int totalPages = (int) Math.ceil((double) totalItems/size);
 		

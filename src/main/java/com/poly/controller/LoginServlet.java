@@ -106,7 +106,7 @@ public class LoginServlet extends HttpServlet {
 			resp.sendRedirect(req.getContextPath() + "/home");
 
 		} catch (Exception e) {
-			AppExceptionHandler.handle(req, resp, e, "lỗi khi đăng nhập");
+			AppExceptionHandler.handle(req, resp, e);
 			return;
 		}
 	}

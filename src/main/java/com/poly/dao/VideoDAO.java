@@ -69,4 +69,6 @@ public interface VideoDAO {
      * @throws AppException nếu xảy ra lỗi trong quá trình xóa
      */
     void delete(String id);
+
+	void increaseViews(String videoId);
 }
