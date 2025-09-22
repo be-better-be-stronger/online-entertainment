@@ -25,6 +25,22 @@
 | Build Tool   | Maven                             |
 | Server       | Apache Tomcat 10                  |
 
+---
+
+## 📌 Lộ trình học Fullstack Java Web
+
+Dự án này ở **Bước 3/6** trong lộ trình:
+
+1. ✅ Java Console  
+2. ✅ Java Swing + JDBC  
+3. ✅ Java Swing + Hibernate  
+4. ✅ JSP/Servlet + JPA/Hibernate  
+5. ⏳ Spring MVC + AngularJS  
+6. ⏳ Spring Boot + Angular + Bootstrap
+
+---
+
+
 ## 📂 Cấu trúc thư mục
 
 ```
