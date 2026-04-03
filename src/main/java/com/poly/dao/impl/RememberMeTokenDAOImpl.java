@@ -1,13 +1,12 @@
 package com.poly.dao.impl;
 
-import java.util.Date;
-
 import com.poly.dao.RememberMeTokenDAO;
 import com.poly.entity.RememberMeToken;
 import com.poly.exception.AppException;
 import com.poly.utils.JpaUtil;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.TypedQuery;
 
@@ -43,28 +42,25 @@ public class RememberMeTokenDAOImpl implements RememberMeTokenDAO {
         }
     }
 
-    @Override
-    public boolean isValid(String userId, String token) {
-        RememberMeToken stored = findByUserId(userId);
-        return stored != null
-            && stored.getToken().equals(token)
-            && stored.getExpiryDate().after(new Date());
-    }
+    
 
     @Override
-    public void deleteByUserId(String userId) {
+    public void deleteTokenByUserId(String userId) {
         EntityManager em = JpaUtil.getEntityManager();
+        EntityTransaction tx = em.getTransaction();
         try {
-            em.getTransaction().begin();
-            RememberMeToken token = findByUserId(userId);
-            if (token != null) {
-                em.remove(em.contains(token) ? token : em.merge(token));
-            }
-            em.getTransaction().commit();
+            tx.begin();
+            em.createQuery("DELETE FROM RememberMeToken t WHERE t.userId = :uid")
+	            .setParameter("uid", userId)
+	            .executeUpdate();
+           tx.commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if(tx.isActive()) tx.rollback();
+            throw new AppException("Lỗi khi xóa remember token", e);
         } finally {
             em.close();
         }
     }
+
+	
 }
