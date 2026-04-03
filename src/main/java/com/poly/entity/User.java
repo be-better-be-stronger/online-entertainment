@@ -17,6 +17,14 @@ public class User {
     private String email;
 
     private String fullname;
+    
+    private Boolean admin = false;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorite> favorites;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Share> shares;
 
     public String getId() {
 		return id;
@@ -74,13 +82,7 @@ public class User {
 		this.shares = shares;
 	}
 
-	private Boolean admin = false;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Favorite> favorites;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Share> shares;
+	
 
     // Getters and setters
 }
