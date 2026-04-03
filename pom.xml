@@ -138,6 +138,14 @@
 	        <artifactId>jakarta.persistence-api</artifactId>
 	        <version>3.1.0</version>
 	    </dependency>
+	    
+	    <!-- java bean -->
+		<dependency>
+		    <groupId>commons-beanutils</groupId>
+		    <artifactId>commons-beanutils</artifactId>
+		    <version>1.9.4</version>
+		</dependency>
+
 
     </dependencies>
 

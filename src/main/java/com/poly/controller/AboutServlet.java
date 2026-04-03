@@ -2,6 +2,7 @@ package com.poly.controller;
 
 import java.io.IOException;
 
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -17,5 +18,7 @@ public class AboutServlet extends HttpServlet{
 		req.setAttribute("view", "/WEB-INF/views/about.jsp");
         req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 	}
+	
+	
 
 }
