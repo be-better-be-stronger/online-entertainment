@@ -3,6 +3,7 @@ package com.poly.service.impl;
 
 import java.util.Properties;
 
+import com.poly.exception.AppException;
 import com.poly.service.MailService;
 import com.poly.utils.MailConfigLoader;
 
@@ -47,5 +48,34 @@ public class MailServiceImpl implements MailService{
 		
 		Transport.send(message);
 	}
+	@Override
+	public void sendWelcomeMail(String email, String fullname) {
+		String subject = "Chào mừng đến với Online Entertaiment!";
+		String body = "Xin chào " + fullname 
+								+ ". Cảm ơn bạn đã đăng ký tài khoản tại Online Entertainment. "
+						        + "Chúc bạn có trải nghiệm tuyệt vời!"
+						        + "Trân trọng, "
+						        + "Đội ngũ OE";
+		try {
+			send(email, subject, body);
+		} catch (MessagingException e) {
+			throw new AppException("Không gửi được email", e);
+		}		
+	}
+	@Override
+	public void sendVerifycationCode(String email, String fullname, String code) {
+		String subject = "Mã xác thực đăng ký tài khoản";
+	    String body = String.format("""
+	        <p>Chào %s,</p>
+	        <p>Mã xác thực đăng ký tài khoản của bạn là: <strong>%s</strong></p>
+	        <p>Vui lòng nhập mã này vào trang xác thực để hoàn tất đăng ký.</p>
+	        """, fullname, code);
+	    try {
+	    	send(email, subject, body);
+		} catch (Exception e) {
+			throw new AppException("Không gửi được email", e);
+		}		
+	}
+	
 
 }
