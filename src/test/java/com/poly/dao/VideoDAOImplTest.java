@@ -1,14 +1,23 @@
 package com.poly.dao;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.List;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 import com.poly.dao.impl.VideoDAOImpl;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.utils.JpaUtil;
-import org.junit.jupiter.api.*;
-
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class VideoDAOImplTest {
 
@@ -39,7 +48,7 @@ class VideoDAOImplTest {
     @AfterEach
     void cleanup() {
         // Xóa toàn bộ dữ liệu
-        List<Video> all = videoDAO.findAll(0, 100);
+        List<Video> all = videoDAO.findAllByPage(0, 100);
         for (Video v : all) {
             videoDAO.delete(v.getId());
         }
@@ -67,8 +76,8 @@ class VideoDAOImplTest {
 
     @Test
     void testFindAllWithPagination() {
-        List<Video> page1 = videoDAO.findAll(0, 5);
-        List<Video> page2 = videoDAO.findAll(1, 5);
+        List<Video> page1 = videoDAO.findAllActiveVideosByPage(0, 5);
+        List<Video> page2 = videoDAO.findAllActiveVideosByPage(1, 5);
         assertEquals(5, page1.size());
         assertEquals(5, page2.size());
     }
