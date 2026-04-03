@@ -48,7 +48,7 @@ public class VideoDAOImpl implements VideoDAO {
 	}
 
     @Override
-    public List<Video> findAll(int page, int size) {
+    public List<Video> findAllActiveVideosByPage(int page, int size) {
         EntityManager em = JpaUtil.getEntityManager();
         try {
         	log.debug("[DAO] Truy vấn video phân trang - page={}, size={}", page, size);
@@ -175,6 +175,22 @@ public class VideoDAOImpl implements VideoDAO {
             em.close();
         }
     }
+
+	@Override
+	public List<Video> findAllByPage(int page, int size) {
+		EntityManager em = JpaUtil.getEntityManager();
+        try {
+        	return em.createQuery("FROM Video v ORDER BY v.createdDate DESC", Video.class)
+   	             .setFirstResult(page*size)
+   	             .setMaxResults(size)
+   	             .getResultList();
+		} catch (Exception e) {
+			throw new AppException("truy vấn danh sách video theo trang", e);
+		} finally {
+			em.close();
+		}
+		
+	}
 
 
 	

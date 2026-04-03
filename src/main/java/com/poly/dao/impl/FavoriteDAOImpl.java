@@ -132,5 +132,20 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 		}
 	}
 
+	@Override
+	public int countByVideoId(String videoId) {
+		EntityManager em = JpaUtil.getEntityManager();
+		try {
+			String jpql = "SELECT COUNT(f) FROM Favorite f WHERE f.video.id = :videoId";
+			return em.createQuery(jpql, Long.class)
+					.setParameter("videoId", videoId)
+					.getSingleResult().intValue();
+		} catch (Exception e) {
+			throw new AppException("Không thể đếm số lượt yêu thích của mỗi video", e);
+		} finally {
+			em.close();
+		}
+	}
+
 
 }
