@@ -1,4 +1,4 @@
-package com.poly.controller;
+package com.poly.controller.auth;
 
 import java.io.IOException;
 
