@@ -17,35 +17,70 @@
         </div>
     </header>
 
-    <!-- Navigation Bar -->
-    <nav class="navbar navbar-expand-lg navbar-warning bg-warning mb-4 shadow-sm rounded-2 mx-3">
-        <div class="container">
-            <a class="navbar-brand fw-bold text-danger text-uppercase" href="${pageContext.request.contextPath}/home">OE</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+   <!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-warning bg-warning mb-4 shadow-sm rounded-2 mx-3">
+    <div class="container">
+        <a class="navbar-brand fw-bold text-danger text-uppercase" href="${pageContext.request.contextPath}/home">OE</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav me-auto">
+				<li class="nav-item">
+                        <a class="nav-link text-dark fw-semibold" href="${pageContext.request.contextPath}/about">About Us</a>
+                </li>
+                <!-- Menu dành cho người dùng đăng nhập -->
+                <c:if test="${not empty sessionScope.currentUser}">
                     <li class="nav-item">
                         <a class="nav-link text-dark fw-semibold" href="${pageContext.request.contextPath}/favorites">My Favorites</a>
                     </li>
+                </c:if>
+
+                <!-- Menu Admin -->
+                <c:if test="${not empty sessionScope.currentUser and sessionScope.currentUser.admin}">
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-dark fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
-                            My Account
+                        <a class="nav-link dropdown-toggle text-danger fw-bold" href="#" role="button" data-bs-toggle="dropdown">
+                            Admin Panel
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login">Login</a></li>
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/forgot-password">Forgot Password</a></li>
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/register">Registration</a></li>
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Logoff</a></li>
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/change-password">Change Password</a></li>
-                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/edit-profile">Edit Profile</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/admin/users">Quản lý người dùng</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/admin/videos">Quản lý video</a></li>
                         </ul>
                     </li>
-                </ul>
-            </div>
+                </c:if>
+
+            </ul>
+
+            <!-- Tài khoản -->
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle text-dark fw-semibold" href="#" role="button" data-bs-toggle="dropdown">
+                        <c:choose>
+                            <c:when test="${not empty sessionScope.currentUser}">
+                                ${sessionScope.currentUser.fullname}
+                            </c:when>
+                            <c:otherwise>My Account</c:otherwise>
+                        </c:choose>
+                    </a>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <c:if test="${not empty sessionScope.currentUser}">
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/change-password">Change Password</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/delete-account">Delete Account</a></li>
+                            <li><hr class="dropdown-divider" /></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/logout">Logoff</a></li>
+                        </c:if>
+                        <c:if test="${empty sessionScope.currentUser}">
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/login">Login</a></li>
+                            <li><a class="dropdown-item" href="${pageContext.request.contextPath}/register">Register</a></li>
+                        </c:if>
+                    </ul>
+                </li>
+            </ul>
         </div>
-    </nav>
+    </div>
+</nav>
+
 
     <!-- Main Content -->
     <main class="container mb-5">

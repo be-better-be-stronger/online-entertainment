@@ -1,19 +1,27 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
+<c:if test="${not empty error}">
+    <div class="alert alert-danger text-center">${error}</div>
+</c:if>
 
 <h2>Đăng ký tài khoản</h2>
 <form action="#" method="post">
-    <label>Họ tên:</label><br>
-    <input type="text" name="fullname"><br><br>
+   <div>
+	   <label class="d-inline-block me-1">Họ tên:</label>
+	   <input class="d-inline-block" type="text" name="fullname">
+   </div>
 
-    <label>Email:</label><br>
-    <input type="email" name="email"><br><br>
+    <div>
+	    <label class="d-inline-block me-1">Email:</label>
+	    <input class="d-inline-block" type="email" name="email">
+    </div>
 
-    <label>Tên đăng nhập:</label><br>
-    <input type="text" name="username"><br><br>
-
-    <label>Mật khẩu:</label><br>
-    <input type="password" name="password"><br><br>
+    <div>
+	    <label class="d-inline-block me-1">Mật khẩu:</label>
+	    <input class="d-inline-block" type="password" name="password">
+    </div>
 
     <button type="submit">Đăng ký</button>
 </form>

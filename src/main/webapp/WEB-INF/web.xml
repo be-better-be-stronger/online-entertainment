@@ -21,25 +21,61 @@
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
 
-	<!-- ✅ Filter 1: AutoLoginFilter (chạy trước) -->
+	<!-- ✅ Filter 1: AuthenticationFilter (chạy trước) -->
     <filter>
-        <filter-name>AutoLoginFilter</filter-name>
-        <filter-class>com.poly.filter.AutoLoginFilter</filter-class>
+        <filter-name>AuthenticationFilter</filter-name>
+        <filter-class>com.poly.filter.AuthenticationFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>AutoLoginFilter</filter-name>
+        <filter-name>AuthenticationFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- ✅ Filter 2: AuthFilter (chạy sau) -->
+    <!-- ✅ Filter 2: AuthorizationFilter (chạy sau) -->
     <filter>
-        <filter-name>AuthFilter</filter-name>
-        <filter-class>com.poly.filter.AuthFilter</filter-class>
+        <filter-name>AuthorizationFilter</filter-name>
+        <filter-class>com.poly.filter.AuthorizationFilter</filter-class>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
+        <filter-name>AuthorizationFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
+    
+    <servlet>
+	    <servlet-name>AdminVideoServlet</servlet-name>
+	    <servlet-class>com.poly.controller.admin.AdminVideoServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>AdminVideoServlet</servlet-name>
+	    <url-pattern>/admin/videos</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+	    <servlet-name>AdminUserServlet</servlet-name>
+	    <servlet-class>com.poly.controller.admin.AdminUserServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>AdminUserServlet</servlet-name>
+	    <url-pattern>/admin/users</url-pattern>
+	</servlet-mapping>
+    
+	<servlet>
+	    <servlet-name>PosterServlet</servlet-name>
+	    <servlet-class>com.poly.controller.PosterServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>PosterServlet</servlet-name>
+	    <url-pattern>/poster</url-pattern>
+	</servlet-mapping>
+	
+	<error-page>
+	    <error-code>403</error-code>
+	    <location>/error</location>
+	</error-page>
+	<error-page>
+	    <error-code>404</error-code>
+	    <location>/error</location>
+	</error-page>
 
 
 </web-app>

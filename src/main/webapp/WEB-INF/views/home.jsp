@@ -3,8 +3,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 
+<c:if test="${empty sessionScope.currentUser}">
+	<div class="alert alert-info" role="alert">
+		🔒 Vui lòng <a href="${pageContext.request.contextPath}/login">đăng
+			nhập</a> để tương tác với video (Thích, Chia sẻ...).
+	</div>
+</c:if>
+
+
 <h3>🔥 Video phổ biến nhất</h3>
-<div class="row">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
 	<c:forEach var="v" items="${popularVideos}">
 		<div class="col-md-4">
 			<c:set var="v" value="${v }" scope="request" />
@@ -16,9 +24,9 @@
 <hr>
 
 <h3>🆕 Video mới nhất</h3>
-<div class="row">
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
 	<c:forEach var="v" items="${newVideos}">
-		<div class="col-md-4">
+		<div class="col">
 			<c:set var="v" value="${v }" scope="request" />
 			<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
 		</div>
@@ -37,13 +45,15 @@
 				trang này.</div>
 		</div>
 	</c:if>
+	<div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+		<c:forEach var="v" items="${videos}">			
+				<c:set var="v" value="${v }" scope="request" />
+				<div class="col">
+					<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
+				</div>
+		</c:forEach>
+	</div>
 
-	<c:forEach var="v" items="${videos}">
-		<div class="col-md-4 mb-4">
-			<c:set var="v" value="${v }" scope="request" />
-			<jsp:include page="/WEB-INF/views/user/video-card.jsp"></jsp:include>
-		</div>
-	</c:forEach>
 </div>
 
 
