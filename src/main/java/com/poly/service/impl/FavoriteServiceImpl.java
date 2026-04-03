@@ -44,13 +44,11 @@ public class FavoriteServiceImpl implements FavoriteService{
 		Favorite fav = favoriteDAO.findByUserAndVideo(userId, videoId);
 	    if (fav != null) {
 	    	log.debug("[TOGGLE] Đã yêu thích rồi, đang thực hiện dislike.");
-//	    	 System.out.println("[TOGGLE] Đã yêu thích rồi, đang thực hiện dislike.");
 	        favoriteDAO.delete(fav.getId());
 	        return false;
 	    } else {
 	    	try {
 	    		log.debug("[TOGGLE] Chưa yêu thích, đang thực hiện insert.");
-//		    	System.out.println("[TOGGLE] Chưa yêu thích, đang thực hiện insert.");
 		        Favorite newFav = new Favorite();
 		        User user = userDAO.findById(userId);
 		        Video video = videoDAO.findById(videoId);
@@ -60,7 +58,6 @@ public class FavoriteServiceImpl implements FavoriteService{
 		        newFav.setLikeDate(new Date());
 		        favoriteDAO.insert(newFav);
 		        log.debug("[TOGGLE] Xử lý xong.");
-//		        System.out.println("[TOGGLE] Xử lý xong.");
 		        return true;
 			} catch (AppException e) {
 			    logInsertError(userId, videoId, e);
@@ -95,6 +92,11 @@ public class FavoriteServiceImpl implements FavoriteService{
 	@Override
 	public long countFavoritesByUser(String userId) {
 		return favoriteDAO.countFavoritesByUser(userId);
+	}
+
+	@Override
+	public int countByVideoId(String videoId) {
+		return favoriteDAO.countByVideoId(videoId);
 	}
 
 }

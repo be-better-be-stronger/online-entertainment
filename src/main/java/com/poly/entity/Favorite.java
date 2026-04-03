@@ -55,5 +55,4 @@ public class Favorite {
 		this.likeDate = likeDate;
 	}
 
-    // Getters and setters
 }

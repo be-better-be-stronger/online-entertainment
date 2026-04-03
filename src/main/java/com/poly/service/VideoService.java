@@ -39,7 +39,7 @@ public interface VideoService {
      * @param size số lượng video mỗi trang
      * @return danh sách video trong trang được chỉ định
      */
-	List<Video> getPage(int page, int size);
+	List<Video> findAllActiveVideosByPage(int page, int size);
 	
 	/**
      * Tìm một video theo ID.
@@ -48,7 +48,7 @@ public interface VideoService {
      * @return đối tượng {@link Video} nếu tìm thấy
      * @throws AppException nếu không tìm thấy hoặc xảy ra lỗi trong quá trình truy vấn
      */
-	Video getVideoById(String id);
+	Video findById(String id);
 	
 	/**
      * Cập nhật thông tin của một video.
@@ -56,7 +56,14 @@ public interface VideoService {
      * @param video đối tượng {@link Video} chứa dữ liệu cần cập nhật
      * @throws AppException nếu xảy ra lỗi khi cập nhật
      */
-	void updateVideo(Video video);
+	void update(Video video);
 	
 	void increaseViews(String videoId);
+
+	void create(Video video);
+
+	void delete(String id);
+	
+	List<Video> findAllByPage(int page, int size);
+	
 }

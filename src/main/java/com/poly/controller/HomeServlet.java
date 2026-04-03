@@ -1,16 +1,18 @@
 package com.poly.controller;
 
 import java.io.IOException;
-
+import java.util.ArrayList;
 import java.util.List;
 
-import com.poly.dao.VideoDAO;
-import com.poly.dao.impl.VideoDAOImpl;
+import com.poly.dto.VideoDTO;
+import com.poly.dto.mapper.Mapper;
 import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.service.FavoriteService;
+import com.poly.service.ShareService;
 import com.poly.service.VideoService;
 import com.poly.service.impl.FavoriteServiceImpl;
+import com.poly.service.impl.ShareServiceImpl;
 import com.poly.service.impl.VideoServiceImpl;
 
 import jakarta.servlet.ServletException;
@@ -25,15 +27,9 @@ public class HomeServlet extends HttpServlet{
 	 */
 	private static final long serialVersionUID = 1L;
 
+	private final VideoService videoService = new VideoServiceImpl();
 	private final FavoriteService favoriteService = new FavoriteServiceImpl();
-	
-	private final VideoService videoService;
-
-	public HomeServlet() {
-		// 👇 Inject VideoDAO vào Service theo đúng constructor
-		VideoDAO videoDAO = new VideoDAOImpl();
-		this.videoService = new VideoServiceImpl(videoDAO);
-	}
+	private final ShareService shareService = new ShareServiceImpl();
 
 
 	@Override
@@ -77,33 +73,22 @@ public class HomeServlet extends HttpServlet{
 		// Gọi từ Service
 		List<Video> popularVideos = videoService.getTop6PopularVideos();
 		List<Video> newVideos = videoService.getTop6LatestVideos();
-		List<Video> pagedVideos = videoService.getPage(page, size);
+		List<Video> pagedVideos = videoService.findAllActiveVideosByPage(page, size);
 		
 		User currentUser = (User) req.getSession().getAttribute("currentUser");
-		if(currentUser != null) {
-			for(Video v : popularVideos) {
-				boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), v.getId());
-				v.setLiked(liked);
-			}
-			
-			for(Video v : newVideos) {
-				boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), v.getId());
-				v.setLiked(liked);
-			}
-			
-			for(Video v : pagedVideos) {
-				boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), v.getId());
-				v.setLiked(liked);
-			}
-		}
 		
-		System.out.println("catalina.base = " + System.getProperty("catalina.base"));
+		List<VideoDTO> popularVideoDTOs = Mapper.toVideoDTOList(popularVideos, currentUser, favoriteService, shareService);
+	    List<VideoDTO> newVideoDTOs = Mapper.toVideoDTOList(newVideos, currentUser, favoriteService, shareService);
+	    List<VideoDTO> pagedVideoDTOs = Mapper.toVideoDTOList(pagedVideos, currentUser, favoriteService, shareService);
+		
+		
+//		System.out.println("catalina.base = " + System.getProperty("catalina.base"));
 
 		
 		// Gửi dữ liệu xuống view
-		req.setAttribute("popularVideos", popularVideos);
-		req.setAttribute("newVideos", newVideos);
-		req.setAttribute("videos", pagedVideos);
+		req.setAttribute("popularVideos", popularVideoDTOs);
+		req.setAttribute("newVideos", newVideoDTOs);
+		req.setAttribute("videos", pagedVideoDTOs);
 		req.setAttribute("currentPage", page);
 		req.setAttribute("totalPages", totalPages);	
 		req.setAttribute("startPage", startPage);
@@ -114,4 +99,8 @@ public class HomeServlet extends HttpServlet{
 		req.getRequestDispatcher("/WEB-INF/layout.jsp")
 			.forward(req, resp);
 	}
+	
+	
+	
+	
 }

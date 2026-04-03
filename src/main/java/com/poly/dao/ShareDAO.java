@@ -5,5 +5,8 @@ import com.poly.entity.Share;
 public interface ShareDAO {
 
 	void create(Share share);
+	
+	int countByVideoId(String videoId);
+
 
 }

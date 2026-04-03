@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.poly.dao.VideoDAO;
+import com.poly.dao.impl.VideoDAOImpl;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.service.VideoService;
@@ -16,8 +17,8 @@ public class VideoServiceImpl implements VideoService{
 	private static final Logger log = LoggerFactory.getLogger(VideoServiceImpl.class);
 	private final VideoDAO videoDAO;
 	
-	public VideoServiceImpl (VideoDAO videoDAO) {
-		this.videoDAO = videoDAO;
+	public VideoServiceImpl () {
+		this.videoDAO = new VideoDAOImpl();
 	}
 
 	@Override
@@ -36,12 +37,12 @@ public class VideoServiceImpl implements VideoService{
 	}
 
 	@Override
-	public List<Video> getPage(int page, int size) {
-		return videoDAO.findAll(page, size);
+	public List<Video> findAllActiveVideosByPage(int page, int size) {
+		return videoDAO.findAllActiveVideosByPage(page, size);
 	}
 
 	@Override
-	public Video getVideoById(String id) {
+	public Video findById(String id) {
 		Video video = videoDAO.findById(id);
 		if (video == null) {
 			log.warn("Không tìm thấy video với ID: {}", id);
@@ -51,7 +52,7 @@ public class VideoServiceImpl implements VideoService{
 	}
 
 	@Override
-	public void updateVideo(Video video) {
+	public void update(Video video) {
 		videoDAO.update(video);		
 	}
 	
@@ -60,5 +61,22 @@ public class VideoServiceImpl implements VideoService{
 		log.debug("[SERVICE] Tăng lượt xem cho video ID = {}", videoId);
 	    videoDAO.increaseViews(videoId);
 	}
+
+	@Override
+	public void create(Video video) {
+		videoDAO.create(video);		
+	}
+
+	@Override
+	public void delete(String id) {
+		videoDAO.delete(id);		
+	}
+
+	@Override
+	public List<Video> findAllByPage(int page, int size) {
+		return videoDAO.findAllByPage(page, size);
+	}
+
+
 
 }

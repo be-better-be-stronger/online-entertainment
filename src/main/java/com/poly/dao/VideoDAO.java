@@ -21,13 +21,13 @@ public interface VideoDAO {
 	List<Video> findTop6ByLatest();	
            
 	 /**
-     * Lấy danh sách video theo phân trang.
+     * Lấy danh sách avtive video theo phân trang.
      *
      * @param page chỉ số trang (bắt đầu từ 0)
      * @param size số lượng video trên mỗi trang
      * @return danh sách video tương ứng với trang và kích thước đã chỉ định
      */
-    List<Video> findAll(int page, int size);  
+    List<Video> findAllActiveVideosByPage(int page, int size);  
     
     /**
      * Đếm tổng số video trong cơ sở dữ liệu.
@@ -71,4 +71,6 @@ public interface VideoDAO {
     void delete(String id);
 
 	void increaseViews(String videoId);
+	
+	List<Video> findAllByPage(int page, int size);
 }

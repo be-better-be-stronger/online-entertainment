@@ -14,8 +14,14 @@ public class Video {
 
     @Column(nullable = false)
     private String title;
+    
+  
+    private String link;
+    
+    @Lob
+    @Column(name = "poster", columnDefinition = "LONGBLOB")
+    private byte[] poster;
 
-    private String poster;
 
     private Integer views = 0;
 
@@ -28,9 +34,11 @@ public class Video {
     @Column(name = "created_date", insertable = false, updatable = false)
     private Date createdDate;
     
-    // Thêm thuộc tính sau để kiểm tra người dùng đã like chưa
-    @Transient
-    private boolean liked;
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Favorite> favorites;
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Share> shares;
 
     public String getId() {
 		return id;
@@ -48,13 +56,13 @@ public class Video {
 		this.title = title;
 	}
 
-	public String getPoster() {
-		return poster;
-	}
+	public byte[] getPoster() {
+        return poster;
+    }
 
-	public void setPoster(String poster) {
-		this.poster = poster;
-	}
+    public void setPoster(byte[] poster) {
+        this.poster = poster;
+    }
 
 	public Integer getViews() {
 		return views;
@@ -104,17 +112,11 @@ public class Video {
 		this.shares = shares;
 	}
 
-	@OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-    private List<Favorite> favorites;
-
-    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL)
-    private List<Share> shares;
-
-    public boolean isLiked() {
-        return liked;
+    public String getLink() {
+        return link;
     }
 
-    public void setLiked(boolean liked) {
-        this.liked = liked;
+    public void setLink(String link) {
+        this.link = link;
     }
 }

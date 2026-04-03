@@ -3,8 +3,7 @@ package com.poly.controller;
 import java.io.IOException;
 import java.util.Date;
 
-import com.poly.dao.impl.ShareDAOImpl;
-import com.poly.dao.impl.VideoDAOImpl;
+
 import com.poly.entity.Share;
 import com.poly.entity.User;
 import com.poly.entity.Video;
@@ -34,8 +33,8 @@ public class ShareVideoServlet extends HttpServlet{
 	
 	public ShareVideoServlet() {
 		this(
-				new ShareServiceImpl(new ShareDAOImpl()),
-				new VideoServiceImpl(new VideoDAOImpl()),
+				new ShareServiceImpl(),
+				new VideoServiceImpl(),
 				new MailServiceImpl()
 		);
 	}
@@ -51,7 +50,7 @@ public class ShareVideoServlet extends HttpServlet{
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		String videoId = req.getParameter("videoId");
 		try {
-			Video video = videoService.getVideoById(videoId);
+			Video video = videoService.findById(videoId);
 			req.setAttribute("video", video);
 			req.setAttribute("view", "/WEB-INF/views/user/share-video.jsp");
 	        req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);	        
@@ -73,7 +72,7 @@ public class ShareVideoServlet extends HttpServlet{
 		String message = req.getParameter("message");
 		
 		try {
-			Video video = videoService.getVideoById(videoId);
+			Video video = videoService.findById(videoId);
 			String videoUrl = req.getScheme() + "://" + req.getServerName() + ":" + req.getServerPort() + 
 					req.getContextPath() + "/video-detail?id=" + videoId;
 			String subject = "Video được chia sẻ từ Online Entertaiment";
@@ -91,6 +90,7 @@ public class ShareVideoServlet extends HttpServlet{
 			shareService.create(share);
 			
 			req.setAttribute("message", "Chia sẻ thành công!");
+			req.setAttribute("video", video);
 			
 		}catch (MessagingException e) {
 			AppExceptionHandler.handle(req, resp, e);
@@ -99,6 +99,7 @@ public class ShareVideoServlet extends HttpServlet{
 		}
 		
 		req.setAttribute("view", "/WEB-INF/views/user/share-video.jsp");
+		
         req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 	}
 

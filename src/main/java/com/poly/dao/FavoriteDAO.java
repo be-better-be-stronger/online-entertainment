@@ -16,5 +16,8 @@ public interface FavoriteDAO {
 	List<Video> findFavoriteVideosByUser(String userId, int page, int size);
 
 	long countFavoritesByUser(String userId);
+	
+	int countByVideoId(String videoId);
+
 
 }

@@ -1,13 +1,15 @@
 package com.poly.controller;
 
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.List;
 
+import com.poly.dto.mapper.Mapper;
 import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.service.FavoriteService;
+import com.poly.service.ShareService;
 import com.poly.service.impl.FavoriteServiceImpl;
+import com.poly.service.impl.ShareServiceImpl;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -21,6 +23,7 @@ public class FavoritesServlet extends HttpServlet {
 	 */
 	private static final long serialVersionUID = 1L;
 	private final FavoriteService favoriteService = new FavoriteServiceImpl();
+	private final ShareService shareService = new ShareServiceImpl();
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
@@ -42,14 +45,11 @@ public class FavoritesServlet extends HttpServlet {
 		}
 		
 		List<Video> favorites = favoriteService.findFavoritesByUser(currentUser.getId(), page, size);
-		for(Video f : favorites) {
-			boolean liked = favoriteService.isVideoLikedByUser(currentUser.getId(), f.getId());
-			f.setLiked(liked);
-		}
+		
 		long totalItems = favoriteService.countFavoritesByUser(currentUser.getId());
 		int totalPages = (int) Math.ceil((double) totalItems/size);
 		
-		req.setAttribute("favorites", favorites);
+		req.setAttribute("favorites", Mapper.toVideoDTOList(favorites, currentUser, favoriteService, shareService));
 		req.setAttribute("page", page);
 		req.setAttribute("totalPages", totalPages);
 		

@@ -7,10 +7,16 @@ import org.slf4j.LoggerFactory;
 
 import com.poly.dao.VideoDAO;
 import com.poly.dao.impl.VideoDAOImpl;
+import com.poly.dto.mapper.Mapper;
+import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.exception.AppExceptionHandler;
+import com.poly.service.FavoriteService;
+import com.poly.service.ShareService;
 import com.poly.service.VideoService;
+import com.poly.service.impl.FavoriteServiceImpl;
+import com.poly.service.impl.ShareServiceImpl;
 import com.poly.service.impl.VideoServiceImpl;
 
 import jakarta.servlet.ServletException;
@@ -22,18 +28,15 @@ public class VideoDetailServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private static final Logger log = LoggerFactory.getLogger(VideoDetailServlet.class);
 	
-	private final VideoService videoService;
+	private final VideoService videoService = new VideoServiceImpl();
+	private final FavoriteService favoriteService = new FavoriteServiceImpl();
+	private final ShareService shareService = new ShareServiceImpl();
 
-	public VideoDetailServlet() {
-		// 👇 Inject VideoDAO vào Service theo đúng constructor
-		VideoDAO videoDAO = new VideoDAOImpl();
-		this.videoService = new VideoServiceImpl(videoDAO);
-	}
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		
+		User currentUser = (User)req.getSession().getAttribute("currentUser");
 		String id = req.getParameter("id");
 		log.debug("[REQUEST] Nhận yêu cầu xem video với id = {}", id);
 		if (id == null || id.isBlank()) {
@@ -44,12 +47,12 @@ public class VideoDetailServlet extends HttpServlet {
 			
 		try {
 			log.debug("[PROCESS] Tìm video và tăng lượt xem...");
-		    Video video = videoService.getVideoById(id);
+		    Video video = videoService.findById(id);
 		    
 		    videoService.increaseViews(id); 
 			log.info("[VIEW] +1 view cho video '{}'", video.getTitle());
 			
-		    req.setAttribute("video", video);
+		    req.setAttribute("video", Mapper.toVideoDTO(video, currentUser, favoriteService, shareService));
 		    req.setAttribute("view", "/WEB-INF/views/user/video-detail.jsp");
 		    req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 		} catch (AppException ex) {
