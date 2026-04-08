@@ -24,3 +24,5 @@ Thumbs.db
 # Ignore sensitive configuration files
 src/main/resources/config.properties
 src/test/resources/config-test.properties
+
+node_modules/

@@ -48,9 +48,10 @@ public class LoginServlet extends HttpServlet {
 		try {
 			User user = userService.login(email, password);
 
-			if (user == null) 
+			if (user == null) {
 				redirectToLoginWithError(req, resp, "Sai tài khoản hoặc mật khẩu");
-			
+				return;
+			}			
 			
 			// Đăng nhập thành công
 			req.getSession().setAttribute("currentUser", user);
@@ -71,7 +72,6 @@ public class LoginServlet extends HttpServlet {
 			throws ServletException, IOException {
 		req.getSession().setAttribute("message", message);
 		resp.sendRedirect(req.getContextPath() + "/login");
-	    return;
 	}
 
 
@@ -88,9 +88,9 @@ public class LoginServlet extends HttpServlet {
 				return;
 			}
 			resp.sendRedirect(redirectUrl);
-		} else {
+		} else 
 			resp.sendRedirect(req.getContextPath() + "/home");
-		}
+		
 	}
 	
 }

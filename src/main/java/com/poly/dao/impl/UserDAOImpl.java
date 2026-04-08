@@ -2,9 +2,6 @@ package com.poly.dao.impl;
 
 import java.util.List;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import com.poly.dao.UserDAO;
 import com.poly.entity.User;
 import com.poly.exception.AppException;
