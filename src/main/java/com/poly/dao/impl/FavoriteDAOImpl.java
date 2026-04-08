@@ -1,6 +1,8 @@
 package com.poly.dao.impl;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,11 +16,12 @@ import com.poly.utils.JpaUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityTransaction;
 import jakarta.persistence.NoResultException;
+import jakarta.persistence.Tuple;
+import jakarta.persistence.TypedQuery;
 
 
 public class FavoriteDAOImpl implements FavoriteDAO{
 	private final Logger log = LoggerFactory.getLogger(FavoriteDAOImpl.class);
-	
 	
 	/**
 	 * Truy vấn một bản ghi Favorite dựa vào userId và videoId.
@@ -145,6 +148,52 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 		} finally {
 			em.close();
 		}
+	}
+
+	@Override
+	public Map<String, Long> countByVideoIds(List<String> videoIds) {
+		EntityManager em = JpaUtil.getEntityManager();
+		String jpql = """
+	            SELECT f.video.id, COUNT(f)
+	            FROM Favorite f
+	            WHERE f.video.id IN :videoIds
+	            GROUP BY f.video.id
+	        """;
+
+	        List<Tuple> result = em.createQuery(jpql, Tuple.class)
+	                .setParameter("videoIds", videoIds)
+	                .getResultList();
+
+	        Map<String, Long> map = new HashMap<>();
+
+	        for (Tuple t : result) {
+	            String videoId = t.get(0, String.class);
+	            Long count = t.get(1, Long.class);
+	            map.put(videoId, count);
+	        }
+	        
+	        em.close();
+
+	        return map;
+	}
+
+	@Override
+	public List<String> findLikedVideoIds(String userId, List<String> videoIds) {
+		EntityManager em = JpaUtil.getEntityManager();
+		String jpql = """
+	            SELECT f.video.id
+	            FROM Favorite f
+	            WHERE f.user.id = :userId
+	              AND f.video.id IN :videoIds
+	        """;
+
+	        TypedQuery<String> query = em.createQuery(jpql, String.class);
+	        query.setParameter("userId", userId);
+	        query.setParameter("videoIds", videoIds);
+
+	        em.close();
+	        
+	        return query.getResultList();
 	}
 
 

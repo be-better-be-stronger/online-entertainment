@@ -14,6 +14,7 @@ public class VideoDTO {
     private boolean liked;
     private int likeCount;
     private int shareCount;
+    
 	public VideoDTO(String id, String title, String description, String link, byte[] poster, int views,
 			Date createdDate, boolean liked, int likeCount, int shareCount) {
 		super();

@@ -3,7 +3,7 @@ package com.poly.controller;
 import java.io.IOException;
 import java.util.List;
 
-import com.poly.dto.mapper.Mapper;
+import com.poly.dto.mapper.VideoMapper;
 import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.service.FavoriteService;
@@ -49,7 +49,7 @@ public class FavoritesServlet extends HttpServlet {
 		long totalItems = favoriteService.countFavoritesByUser(currentUser.getId());
 		int totalPages = (int) Math.ceil((double) totalItems/size);
 		
-		req.setAttribute("favorites", Mapper.toVideoDTOList(favorites, currentUser, favoriteService, shareService));
+		req.setAttribute("favorites", VideoMapper.toVideoDTOList(favorites, currentUser, favoriteService, shareService));
 		req.setAttribute("page", page);
 		req.setAttribute("totalPages", totalPages);
 		

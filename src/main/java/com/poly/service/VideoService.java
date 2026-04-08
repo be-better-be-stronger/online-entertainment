@@ -2,7 +2,10 @@ package com.poly.service;
 
 import java.util.List;
 
+import com.poly.dto.response.HomeResponse;
+import com.poly.entity.User;
 import com.poly.entity.Video;
+import com.poly.exception.AppException;
 
 
 /**
@@ -65,5 +68,7 @@ public interface VideoService {
 	void delete(String id);
 	
 	List<Video> findAllByPage(int page, int size);
+	
+	HomeResponse getHomeData(int page, int size, User currentUser);
 	
 }

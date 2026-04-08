@@ -1,5 +1,8 @@
 package com.poly.service;
 
+import java.util.List;
+import java.util.Map;
+
 import com.poly.entity.Share;
 
 public interface ShareService {
@@ -17,4 +20,6 @@ public interface ShareService {
 	 * @return số lượng chia sẻ của video
 	 */
 	int countByVideoId(String videoId);
+	
+	Map<String, Integer> countByVideoIds(List<String> videoIds);
 }

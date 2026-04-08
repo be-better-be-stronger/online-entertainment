@@ -1,5 +1,8 @@
 package com.poly.dao;
 
+import java.util.List;
+import java.util.Map;
+
 import com.poly.entity.Share;
 
 public interface ShareDAO {
@@ -8,5 +11,5 @@ public interface ShareDAO {
 	
 	int countByVideoId(String videoId);
 
-
+	Map<String, Long> countByVideoIds(List<String> videoIds);
 }

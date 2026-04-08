@@ -18,6 +18,7 @@
 package com.poly.service;
 
 import java.util.List;
+import java.util.Map;
 
 import com.poly.entity.Video;
 
@@ -66,4 +67,8 @@ public interface FavoriteService {
 	 * @return số lượng lượt thích của video
 	 */
 	int countByVideoId(String videoId);
+	
+	Map<String, Boolean> getLikedMap(String userId, List<String> videoIds);
+	
+	Map<String, Integer> countByVideoIds(List<String> videoIds);
 }

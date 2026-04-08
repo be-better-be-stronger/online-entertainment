@@ -1,7 +1,12 @@
 package com.poly.service.impl;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,6 +102,41 @@ public class FavoriteServiceImpl implements FavoriteService{
 	@Override
 	public int countByVideoId(String videoId) {
 		return favoriteDAO.countByVideoId(videoId);
+	}
+
+	@Override
+	public Map<String, Boolean> getLikedMap(String userId, List<String> videoIds) {
+		// 1. validate
+        if (userId == null || videoIds == null || videoIds.isEmpty()) {
+            return Collections.emptyMap();
+        }
+
+        // 2. query 1 lần duy nhất
+        List<String> likedVideoIds = favoriteDAO.findLikedVideoIds(userId, videoIds);
+
+        // 3. convert sang Set để lookup O(1)
+        Set<String> likedSet = new HashSet<>(likedVideoIds);
+
+        // 4. build result map
+        Map<String, Boolean> result = new HashMap<>();
+
+        for (String videoId : videoIds) {
+            result.put(videoId, likedSet.contains(videoId));
+        }
+
+        return result;
+	}
+
+	@Override
+	public Map<String, Integer> countByVideoIds(List<String> videoIds) {
+		if(videoIds == null || videoIds.isEmpty())
+			return Collections.emptyMap();
+		Map<String, Long> rawMap = favoriteDAO.countByVideoIds(videoIds);
+		Map<String, Integer> result = new HashMap<>();
+		for(String videoId : videoIds) {
+			result.put(videoId, rawMap.getOrDefault(videoId, 0L).intValue());
+		}
+		return result;
 	}
 
 }

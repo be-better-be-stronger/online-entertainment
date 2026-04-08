@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.poly.dao.VideoDAO;
 import com.poly.dao.impl.VideoDAOImpl;
-import com.poly.dto.mapper.Mapper;
+import com.poly.dto.mapper.VideoMapper;
 import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
@@ -52,7 +52,7 @@ public class VideoDetailServlet extends HttpServlet {
 		    videoService.increaseViews(id); 
 			log.info("[VIEW] +1 view cho video '{}'", video.getTitle());
 			
-		    req.setAttribute("video", Mapper.toVideoDTO(video, currentUser, favoriteService, shareService));
+		    req.setAttribute("video", VideoMapper.toVideoDTO(video, currentUser, favoriteService, shareService));
 		    req.setAttribute("view", "/WEB-INF/views/user/video-detail.jsp");
 		    req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 		} catch (AppException ex) {

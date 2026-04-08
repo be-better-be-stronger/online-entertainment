@@ -1,18 +1,13 @@
 package com.poly.controller;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
-import com.poly.dto.VideoDTO;
-import com.poly.dto.mapper.Mapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import com.poly.dto.response.HomeResponse;
 import com.poly.entity.User;
-import com.poly.entity.Video;
-import com.poly.service.FavoriteService;
-import com.poly.service.ShareService;
 import com.poly.service.VideoService;
-import com.poly.service.impl.FavoriteServiceImpl;
-import com.poly.service.impl.ShareServiceImpl;
 import com.poly.service.impl.VideoServiceImpl;
 
 import jakarta.servlet.ServletException;
@@ -20,87 +15,49 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
-public class HomeServlet extends HttpServlet{
+public class HomeServlet extends HttpServlet {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private final VideoService videoService = new VideoServiceImpl();
-	private final FavoriteService favoriteService = new FavoriteServiceImpl();
-	private final ShareService shareService = new ShareServiceImpl();
+	private static final Logger log = LoggerFactory.getLogger(HomeServlet.class);
 
+	private final VideoService videoService = new VideoServiceImpl();
 
 	@Override
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 		int size = 6;
-	    int page = 0;
+		int page = 0;
 
-	    try {
-	        String pageParam = req.getParameter("page");
-	        if(pageParam != null) {
-	        	page = Integer.parseInt(pageParam);
-	        	if (page < 0) {
+		try {
+			String pageParam = req.getParameter("page");
+			if (pageParam != null) {
+				page = Integer.parseInt(pageParam);
+				if (page < 0)
 					page = 0;
-				}
-	        }
-	        System.out.println("page = " + (page + 1));
-	    } catch (NumberFormatException e) {
-	        page = 0;
-	        System.out.println("lỗi phân trang");
-	    }
-	    
-	    
-	            
+			}
+			log.info("Home request - page={}", page);
+		} catch (NumberFormatException e) {
+			page = 0;
+			log.warn("Invalid page param, fallback to 0", e);
+		}
 
-	    // Dữ liệu phân trang
-	    
-	    long totalItems = videoService.getTotalVideos();
-	    int totalPages = (int) Math.ceil((double) totalItems / size);
-	    
-	    int visiblePages = 9;
-	    int startPage = Math.max(0, page - visiblePages / 2);
-	    int endPage = Math.min(totalPages - 1, startPage + visiblePages - 1);
-
-	    // Nếu bị hụt thì lùi startPage lại cho đủ visiblePages
-	    if (endPage - startPage < visiblePages - 1) {
-	        startPage = Math.max(0, endPage - visiblePages + 1);
-	    }
-
-	    
-		
-		// Gọi từ Service
-		List<Video> popularVideos = videoService.getTop6PopularVideos();
-		List<Video> newVideos = videoService.getTop6LatestVideos();
-		List<Video> pagedVideos = videoService.findAllActiveVideosByPage(page, size);
-		
 		User currentUser = (User) req.getSession().getAttribute("currentUser");
-		
-		List<VideoDTO> popularVideoDTOs = Mapper.toVideoDTOList(popularVideos, currentUser, favoriteService, shareService);
-	    List<VideoDTO> newVideoDTOs = Mapper.toVideoDTOList(newVideos, currentUser, favoriteService, shareService);
-	    List<VideoDTO> pagedVideoDTOs = Mapper.toVideoDTOList(pagedVideos, currentUser, favoriteService, shareService);
-		
-		
-//		System.out.println("catalina.base = " + System.getProperty("catalina.base"));
+		log.debug("Current user={}", currentUser != null ? currentUser.getEmail() : "anonymous");
 
-		
-		// Gửi dữ liệu xuống view
-		req.setAttribute("popularVideos", popularVideoDTOs);
-		req.setAttribute("newVideos", newVideoDTOs);
-		req.setAttribute("videos", pagedVideoDTOs);
-		req.setAttribute("currentPage", page);
-		req.setAttribute("totalPages", totalPages);	
-		req.setAttribute("startPage", startPage);
-	    req.setAttribute("endPage", endPage);
-	    
+		// truyền user xuống service
+		try {
+			 HomeResponse data = videoService.getHomeData(page, size, currentUser);
+		     log.info("Load home data success - page={}", page);
+		     req.setAttribute("data", data);
+		} catch (Exception e) {
+			log.error("Error while loading home data", e);
+            throw e;
+		}
 		// View layout
 		req.setAttribute("view", "/WEB-INF/views/home.jsp");
-		req.getRequestDispatcher("/WEB-INF/layout.jsp")
-			.forward(req, resp);
+		req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
 	}
-	
-	
-	
-	
+
 }

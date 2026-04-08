@@ -37,8 +37,10 @@ public class JpaUtil {
                    
             factory = Persistence.createEntityManagerFactory(persistenceUnit, jpaProps); 
         } catch (IOException e) {
+        	e.printStackTrace();
             throw new AppException("Lỗi khi đọc file cấu hình", e);
         } catch (Exception e) {
+        	e.printStackTrace();
             throw new AppException("Lỗi khi khởi tạo EntityManagerFactory", e);
         }
     }
