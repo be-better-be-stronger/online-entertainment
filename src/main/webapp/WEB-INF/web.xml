@@ -20,10 +20,18 @@
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>
-
-
 	
-	<!-- ✅ Filter 1: AuthenticationFilter (chạy trước) -->
+	<!-- ✅ Filter 1 LoggingFilter (chạy trước) -->
+	<filter>
+	    <filter-name>LoggingFilter</filter-name>
+	    <filter-class>com.poly.filter.LoggingFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>LoggingFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- ✅ Filter 2 AuthenticationFilter (chạy thứ 2) -->
     <filter>
         <filter-name>AuthenticationFilter</filter-name>
         <filter-class>com.poly.filter.AuthenticationFilter</filter-class>
@@ -33,7 +41,7 @@
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- ✅ Filter 2: AuthorizationFilter (chạy sau) -->
+    <!-- ✅ Filter 3: AuthorizationFilter (chạy thứ 3) -->
     <filter>
         <filter-name>AuthorizationFilter</filter-name>
         <filter-class>com.poly.filter.AuthorizationFilter</filter-class>
