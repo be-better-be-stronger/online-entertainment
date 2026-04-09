@@ -1,5 +1,8 @@
 package com.poly.dto.mapper;
 
+import java.util.List;
+import java.util.Map;
+
 import com.poly.dto.VideoDTO;
 import com.poly.entity.Video;
 
@@ -28,4 +31,20 @@ public class VideoMapper {
 				shareCount
 		);
 	}
+	
+	public static List<VideoDTO> mapList(
+            List<Video> videos,
+            Map<String, Boolean> likedMap,
+            Map<String, Integer> likeCountMap,
+            Map<String, Integer> shareCountMap
+    ) {
+        return videos.stream()
+                .map(v -> VideoMapper.toVideoDTO(
+                        v,
+                        likedMap.getOrDefault(v.getId(), false),
+                        likeCountMap.getOrDefault(v.getId(), 0),
+                        shareCountMap.getOrDefault(v.getId(), 0)
+                ))
+                .toList();
+    }
 }

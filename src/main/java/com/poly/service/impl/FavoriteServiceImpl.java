@@ -94,32 +94,53 @@ public class FavoriteServiceImpl implements FavoriteService{
 
 	@Override
 	public FavoritesResponse findFavoritesByUser(User currentUser, int page, int size) {
-		// 1. lấy dữ liệu
-		List<Video> videos = favoriteDAO.findFavoriteVideosByUser(currentUser.getId(), page, size);
-		
-		//2. lấy videoIds
-		List<String> videoIds = videos.stream()
-                .map(Video::getId)
-                .toList();
-		
-		// 3. chuẩn bị userId
-        String userId = (currentUser != null) ? currentUser.getId() : null;        
 
-        // 4. batch query
-        Map<String, Boolean> likedMap = (userId != null)
-                ? getLikedMap(userId, videoIds)
-                : Collections.emptyMap();
-        
-        Map<String, Integer> likeCountMap = countByVideoIds(videoIds);
-        Map<String, Integer> shareCountMap = shareService.countByVideoIds(videoIds);
-		
-	    long totalItems = favoriteDAO.countFavoritesByUser(currentUser.getId());
-	    
-	    int totalPages = (int) Math.ceil((double) totalItems / size);
+	    String userId = currentUser != null ? currentUser.getId() : null;
 
-	    List<VideoDTO> dtos = mapList(videos, likedMap, likeCountMap, shareCountMap);
+	    log.info("Start findFavoritesByUser: userId={}, page={}, size={}", userId, page, size);
 
-	    return new FavoritesResponse(dtos, page, totalPages);
+	    try {
+	        // 1. lấy dữ liệu
+	        log.debug("Fetching favorite videos from DAO");
+	        List<Video> videos = favoriteDAO.findFavoriteVideosByUser(userId, page, size);
+
+	        log.debug("Fetched {} videos", videos.size());
+
+	        // 2. lấy videoIds
+	        List<String> videoIds = videos.stream()
+	                .map(Video::getId)
+	                .toList();
+
+	        log.debug("Extracted videoIds: {}", videoIds);
+
+	        // 3. batch query
+	        Map<String, Boolean> likedMap = (userId != null)
+	                ? getLikedMap(userId, videoIds)
+	                : Collections.emptyMap();
+
+	        Map<String, Integer> likeCountMap = countByVideoIds(videoIds);
+	        Map<String, Integer> shareCountMap = shareService.countByVideoIds(videoIds);
+
+	        log.debug("Fetched metadata: likedMap={}, likeCountMap={}, shareCountMap={}",
+	                likedMap.size(), likeCountMap.size(), shareCountMap.size());
+
+	        // 4. tổng số item
+	        long totalItems = favoriteDAO.countFavoritesByUser(userId);
+	        int totalPages = (int) Math.ceil((double) totalItems / size);
+
+	        log.debug("Pagination: totalItems={}, totalPages={}", totalItems, totalPages);
+
+	        // 5. map DTO
+	        List<VideoDTO> dtos = VideoMapper.mapList(videos, likedMap, likeCountMap, shareCountMap);
+
+	        log.info("End findFavoritesByUser: returned {} items", dtos.size());
+
+	        return new FavoritesResponse(dtos, page, totalPages);
+
+	    } catch (Exception e) {
+	        log.error("Error in findFavoritesByUser: userId={}, page={}, size={}", userId, page, size, e);
+	        throw e;
+	    }
 	}
 
 	@Override
@@ -167,20 +188,6 @@ public class FavoriteServiceImpl implements FavoriteService{
 		return result;
 	}
 	
-	private List<VideoDTO> mapList(
-            List<Video> videos,
-            Map<String, Boolean> likedMap,
-            Map<String, Integer> likeCountMap,
-            Map<String, Integer> shareCountMap
-    ) {
-        return videos.stream()
-                .map(v -> VideoMapper.toVideoDTO(
-                        v,
-                        likedMap.getOrDefault(v.getId(), false),
-                        likeCountMap.getOrDefault(v.getId(), 0),
-                        shareCountMap.getOrDefault(v.getId(), 0)
-                ))
-                .toList();
-    }
+	
 
 }

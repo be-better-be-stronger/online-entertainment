@@ -53,13 +53,14 @@ public class VideoServiceImpl implements VideoService{
 	}
 
 	@Override
-	public Video findById(String id) {
+	public VideoDTO findById(String id) {
 		Video video = videoDAO.findById(id);
 		if (video == null) {
 			log.warn("Không tìm thấy video với ID: {}", id);
 			throw new AppException("Không tìm thấy video với ID: " + id);
 		}
-		return video;
+		
+		return VideoMapper.toVideoDTO(video, false, 0, 0);
 	}
 
 	@Override
@@ -119,9 +120,9 @@ public class VideoServiceImpl implements VideoService{
         Map<String, Integer> shareCountMap = shareService.countByVideoIds(videoIds);
         
         // 6. map từng list riêng biệt
-        List<VideoDTO> popularDTOs = mapList(popularVideos, likedMap, likeCountMap, shareCountMap);
-        List<VideoDTO> newDTOs = mapList(newVideos, likedMap, likeCountMap, shareCountMap);
-        List<VideoDTO> pagedDTOs = mapList(pagedVideos, likedMap, likeCountMap, shareCountMap);
+        List<VideoDTO> popularDTOs = VideoMapper.mapList(popularVideos, likedMap, likeCountMap, shareCountMap);
+        List<VideoDTO> newDTOs = VideoMapper.mapList(newVideos, likedMap, likeCountMap, shareCountMap);
+        List<VideoDTO> pagedDTOs = VideoMapper.mapList(pagedVideos, likedMap, likeCountMap, shareCountMap);
         
         // 7. pagination (chỉ áp dụng cho paged)	    
 	    long totalItems = getTotalVideos();
@@ -151,21 +152,7 @@ public class VideoServiceImpl implements VideoService{
         return res;
 	}
 
-	private List<VideoDTO> mapList(
-            List<Video> videos,
-            Map<String, Boolean> likedMap,
-            Map<String, Integer> likeCountMap,
-            Map<String, Integer> shareCountMap
-    ) {
-        return videos.stream()
-                .map(v -> VideoMapper.toVideoDTO(
-                        v,
-                        likedMap.getOrDefault(v.getId(), false),
-                        likeCountMap.getOrDefault(v.getId(), 0),
-                        shareCountMap.getOrDefault(v.getId(), 0)
-                ))
-                .toList();
-    }
+	
 
 
 }
