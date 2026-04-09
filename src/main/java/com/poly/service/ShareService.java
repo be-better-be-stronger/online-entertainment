@@ -21,5 +21,5 @@ public interface ShareService {
 	 */
 	int countByVideoId(String videoId);
 	
-	Map<String, Integer> countByVideoIds(List<String> videoIds);
+	Map<String, Long> countByVideoIds(List<String> videoIds);
 }

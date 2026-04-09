@@ -25,14 +25,7 @@ import com.poly.entity.User;
 
 public interface FavoriteService {
 	
-	/**
-	 * Kiểm tra xem video có được người dùng thích hay không.
-	 * 
-	 * @param userId ID của người dùng
-	 * @param videoId ID của video
-	 * @return true nếu video được thích bởi người dùng, ngược lại false
-	 */
-	boolean isVideoLikedByUser(String userId, String videoId);
+
 	
 	/**
 	 * Chuyển đổi trạng thái thích của video bởi người dùng.
@@ -69,7 +62,8 @@ public interface FavoriteService {
 	 */
 	int countByVideoId(String videoId);
 	
+
 	Map<String, Boolean> getLikedMap(String userId, List<String> videoIds);
 	
-	Map<String, Integer> countByVideoIds(List<String> videoIds);
+	Map<String, Long> countByVideoIds(List<String> videoIds);
 }

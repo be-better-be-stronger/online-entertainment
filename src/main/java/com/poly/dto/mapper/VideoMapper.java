@@ -10,8 +10,8 @@ public class VideoMapper {
 	public static VideoDTO toVideoDTO(
 			Video video, 
 			boolean liked, 
-			int likeCount, 
-			int shareCount) {
+			long likeCount, 
+			long shareCount) {
 
 		if (video == null) {
 			return null; 
@@ -35,15 +35,15 @@ public class VideoMapper {
 	public static List<VideoDTO> mapList(
             List<Video> videos,
             Map<String, Boolean> likedMap,
-            Map<String, Integer> likeCountMap,
-            Map<String, Integer> shareCountMap
+            Map<String, Long> likeCountMap,
+            Map<String, Long> shareCountMap
     ) {
         return videos.stream()
                 .map(v -> VideoMapper.toVideoDTO(
                         v,
                         likedMap.getOrDefault(v.getId(), false),
-                        likeCountMap.getOrDefault(v.getId(), 0),
-                        shareCountMap.getOrDefault(v.getId(), 0)
+                        likeCountMap.getOrDefault(v.getId(), 0L),
+                        shareCountMap.getOrDefault(v.getId(), 0L)
                 ))
                 .toList();
     }

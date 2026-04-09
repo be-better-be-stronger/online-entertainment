@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import com.poly.dto.response.FavoritesResponse;
 import com.poly.entity.User;
+import com.poly.exception.AppExceptionHandler;
 import com.poly.service.FavoriteService;
 import com.poly.service.impl.FavoriteServiceImpl;
 
@@ -25,14 +26,14 @@ public class FavoritesServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
         throws ServletException, IOException {
-		log.info("[FavoritesServlet] GET /favorites - start");
+		log.info("GET /favorites - start");
 		User currentUser = (User) req.getSession().getAttribute("currentUser");
 		if(currentUser == null) {
-			log.warn("User not logged in -> redirect to /login");
+			log.warn("User not logged in, redirect to login");
 			resp.sendRedirect(req.getContextPath() + "/login");
 			return;
 		}
-		log.debug("Current user: id={}, email={}", currentUser.getId(), currentUser.getEmail());
+		log.debug("User info: id={}, email={}", currentUser.getId(), currentUser.getEmail());
 		int page = 0, size = 6;
 		try {
 			String pageParam = req.getParameter("page");
@@ -47,14 +48,19 @@ public class FavoritesServlet extends HttpServlet {
 			log.warn("Invalid page format -> fallback to 0, value={}", req.getParameter("page"));
 			page = 0;
 		}
-		
-		log.info("Fetch favorites: page={}, size={}", page, size);
-		FavoritesResponse favorites = favoriteService.findFavoritesByUser(currentUser, page, size);
-		
-		req.setAttribute("data", favorites);		
+		try {
+			log.info("Fetching favorites for userId={}, page={}, size={}",
+			        currentUser.getId(), page, size);
+			FavoritesResponse favorites = favoriteService.findFavoritesByUser(currentUser, page, size);
+			req.setAttribute("data", favorites);	
+		} catch (Exception e) {
+			log.error("💥 Error while fetching favorites", e);
+			AppExceptionHandler.handle(req, resp, e);
+		}		
+			
         req.setAttribute("view", "/WEB-INF/views/user/favorites.jsp");
         
-        log.info("Forward to layout.jsp (favorites view)");
+        log.info("Forwarding to favorites view");
         req.getRequestDispatcher("/WEB-INF/layout.jsp").forward(req, resp);
         
         log.info("[FavoritesServlet] GET /favorites - end");
