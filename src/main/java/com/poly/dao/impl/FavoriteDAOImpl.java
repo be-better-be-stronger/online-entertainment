@@ -19,14 +19,13 @@ import jakarta.persistence.NoResultException;
 import jakarta.persistence.Tuple;
 import jakarta.persistence.TypedQuery;
 
-
-public class FavoriteDAOImpl implements FavoriteDAO{
+public class FavoriteDAOImpl implements FavoriteDAO {
 	private final Logger log = LoggerFactory.getLogger(FavoriteDAOImpl.class);
-	
+
 	/**
 	 * Truy vấn một bản ghi Favorite dựa vào userId và videoId.
 	 *
-	 * @param userId ID của người dùng
+	 * @param userId  ID của người dùng
 	 * @param videoId ID của video
 	 * @return đối tượng Favorite nếu tồn tại, null nếu không
 	 * @throws AppException nếu xảy ra lỗi trong quá trình truy vấn
@@ -37,22 +36,18 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 		EntityManager em = JpaUtil.getEntityManager();
 //		chỉ đọc, không cần transaction
 		try {
-			String jpql = "select f from Favorite f where "
-					+ "f.user.id = :uid and "
-					+ "f.video.id = :vid";
+			String jpql = "select f from Favorite f where " + "f.user.id = :uid and " + "f.video.id = :vid";
 //			TypedQuery<Favorite> query = em.createQuery(jpql, Favorite.class);
 //			query.setParameter("uid", userId);
 //			query.setParameter("vid", videoId);
 //			return query.getSingleResult();
-			return em.createQuery(jpql, Favorite.class)
-				.setParameter("uid", userId)
-				.setParameter("vid", videoId)
-				.getSingleResult();
-		}catch (NoResultException e) {
-			return null;		
-		}catch (Exception e) {
+			return em.createQuery(jpql, Favorite.class).setParameter("uid", userId).setParameter("vid", videoId)
+					.getSingleResult();
+		} catch (NoResultException e) {
+			return null;
+		} catch (Exception e) {
 			throw new AppException("truy vấn favorite", e);
-		}finally {
+		} finally {
 			em.close();
 		}
 	}
@@ -61,42 +56,44 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 	public void delete(Long id) {
 		EntityManager em = JpaUtil.getEntityManager();
 		EntityTransaction trans = em.getTransaction();
-	    try {
-	        trans.begin();
-	        Favorite favorite = em.find(Favorite.class, id);
-	        if (favorite != null) {
-	            em.remove(favorite);	          
-	            log.debug("Đã xoá favorite: id={}", id);
-	        }else {
-	        	log.warn("Không tìm thấy favorite với id={} để xoá", id);
+		try {
+			trans.begin();
+			Favorite favorite = em.find(Favorite.class, id);
+			if (favorite != null) {
+				em.remove(favorite);
+				log.debug("Đã xoá favorite: id={}", id);
+			} else {
+				log.warn("Không tìm thấy favorite với id={} để xoá", id);
 			}
-	        trans.commit();
-	        
-	    } catch (Exception e) {
-	        if (trans.isActive()) trans.rollback();
-	        throw new AppException("Không thể xóa favorite", e);
-	    } finally {
-	        em.close();
-	    }
-		
+			trans.commit();
+
+		} catch (Exception e) {
+			if (trans.isActive())
+				trans.rollback();
+			throw new AppException("Không thể xóa favorite", e);
+		} finally {
+			em.close();
+		}
+
 	}
 
 	@Override
 	public void insert(Favorite newFav) {
 		EntityManager em = JpaUtil.getEntityManager();
 		EntityTransaction trans = em.getTransaction();
-	    try {
-	    	trans.begin();
-	        em.persist(newFav);
-	        trans.commit();
-	        log.debug("Insert favorite thành công: {}", newFav);
-	    } catch (Exception e) {
-	        if(trans.isActive()) trans.rollback();
-	        throw new AppException("Không thể insert favorite", e);
-	    } finally {
-	        em.close();
-	    }
-		
+		try {
+			trans.begin();
+			em.persist(newFav);
+			trans.commit();
+			log.debug("Insert favorite thành công: {}", newFav);
+		} catch (Exception e) {
+			if (trans.isActive())
+				trans.rollback();
+			throw new AppException("Không thể insert favorite", e);
+		} finally {
+			em.close();
+		}
+
 	}
 
 //	Danh sách video đã thích (có phân trang)
@@ -104,19 +101,15 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 	public List<Video> findFavoriteVideosByUser(String userId, int page, int size) {
 		EntityManager em = JpaUtil.getEntityManager();
 		try {
-			String jpql = "SELECT f.video FROM Favorite f WHERE f.user.id = :userId "
-					+ "ORDER BY f.likeDate DESC";
-			return em.createQuery(jpql, Video.class)
-					.setParameter("userId", userId)
-					.setFirstResult(page*size)
-					.setMaxResults(size)
-					.getResultList();
-		}catch (Exception e) {
-	        throw new AppException("Không thể truy vấn danh sách video yêu thích", e);
-	    }  finally {
+			String jpql = "SELECT f.video FROM Favorite f WHERE f.user.id = :userId " + "ORDER BY f.likeDate DESC";
+			return em.createQuery(jpql, Video.class).setParameter("userId", userId).setFirstResult(page * size)
+					.setMaxResults(size).getResultList();
+		} catch (Exception e) {
+			throw new AppException("Không thể truy vấn danh sách video yêu thích", e);
+		} finally {
 			em.close();
 		}
-		
+
 	}
 
 //	Đếm tổng số video yêu thích
@@ -125,10 +118,8 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 		EntityManager em = JpaUtil.getEntityManager();
 		try {
 			String jpql = "SELECT COUNT(f) FROM Favorite f WHERE f.user.id = :uid";
-			return em.createQuery(jpql, Long.class)
-								.setParameter("uid", userId)
-								.getSingleResult();
-		}catch (Exception e) {
+			return em.createQuery(jpql, Long.class).setParameter("uid", userId).getSingleResult();
+		} catch (Exception e) {
 			throw new AppException("Không thể đếm video yêu thích", e);
 		} finally {
 			em.close();
@@ -140,9 +131,7 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 		EntityManager em = JpaUtil.getEntityManager();
 		try {
 			String jpql = "SELECT COUNT(f) FROM Favorite f WHERE f.video.id = :videoId";
-			return em.createQuery(jpql, Long.class)
-					.setParameter("videoId", videoId)
-					.getSingleResult().intValue();
+			return em.createQuery(jpql, Long.class).setParameter("videoId", videoId).getSingleResult().intValue();
 		} catch (Exception e) {
 			throw new AppException("Không thể đếm số lượt yêu thích của mỗi video", e);
 		} finally {
@@ -154,47 +143,46 @@ public class FavoriteDAOImpl implements FavoriteDAO{
 	public Map<String, Long> countByVideoIds(List<String> videoIds) {
 		EntityManager em = JpaUtil.getEntityManager();
 		String jpql = """
-	            SELECT f.video.id, COUNT(f)
-	            FROM Favorite f
-	            WHERE f.video.id IN :videoIds
-	            GROUP BY f.video.id
-	        """;
+				    SELECT f.video.id, COUNT(f)
+				    FROM Favorite f
+				    WHERE f.video.id IN :videoIds
+				    GROUP BY f.video.id
+				""";
 
-	        List<Tuple> result = em.createQuery(jpql, Tuple.class)
-	                .setParameter("videoIds", videoIds)
-	                .getResultList();
+		List<Tuple> result = em.createQuery(jpql, Tuple.class).setParameter("videoIds", videoIds).getResultList();
 
-	        Map<String, Long> map = new HashMap<>();
+		Map<String, Long> map = new HashMap<>();
 
-	        for (Tuple t : result) {
-	            String videoId = t.get(0, String.class);
-	            Long count = t.get(1, Long.class);
-	            map.put(videoId, count);
-	        }
-	        
-	        em.close();
+		for (Tuple t : result) {
+			String videoId = t.get(0, String.class);
+			Long count = t.get(1, Long.class);
+			map.put(videoId, count);
+		}
 
-	        return map;
+		em.close();
+
+		return map;
 	}
 
 	@Override
 	public List<String> findLikedVideoIds(String userId, List<String> videoIds) {
 		EntityManager em = JpaUtil.getEntityManager();
-		String jpql = """
-	            SELECT f.video.id
-	            FROM Favorite f
-	            WHERE f.user.id = :userId
-	              AND f.video.id IN :videoIds
-	        """;
+		try {
+			String jpql = """
+					    SELECT f.video.id
+					    FROM Favorite f
+					    WHERE f.user.id = :userId
+					      AND f.video.id IN :videoIds
+					""";
 
-	        TypedQuery<String> query = em.createQuery(jpql, String.class);
-	        query.setParameter("userId", userId);
-	        query.setParameter("videoIds", videoIds);
+			TypedQuery<String> query = em.createQuery(jpql, String.class);
+			query.setParameter("userId", userId);
+			query.setParameter("videoIds", videoIds);	
 
-	        em.close();
-	        
-	        return query.getResultList();
+			return query.getResultList();
+		} finally {
+			em.close();
+		}
 	}
-
 
 }

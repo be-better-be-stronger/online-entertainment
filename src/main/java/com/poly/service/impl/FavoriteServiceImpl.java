@@ -17,11 +17,15 @@ import com.poly.dao.VideoDAO;
 import com.poly.dao.impl.FavoriteDAOImpl;
 import com.poly.dao.impl.UserDAOImpl;
 import com.poly.dao.impl.VideoDAOImpl;
+import com.poly.dto.VideoDTO;
+import com.poly.dto.mapper.VideoMapper;
+import com.poly.dto.response.FavoritesResponse;
 import com.poly.entity.Favorite;
 import com.poly.entity.User;
 import com.poly.entity.Video;
 import com.poly.exception.AppException;
 import com.poly.service.FavoriteService;
+import com.poly.service.ShareService;
 
 public class FavoriteServiceImpl implements FavoriteService{
 	
@@ -30,8 +34,7 @@ public class FavoriteServiceImpl implements FavoriteService{
 	private final FavoriteDAO favoriteDAO = new FavoriteDAOImpl();
 	private final UserDAO userDAO = new UserDAOImpl();
 	private final VideoDAO videoDAO = new VideoDAOImpl();
-	
-	
+	private final ShareService shareService = new ShareServiceImpl();
 	
 	
 	/**
@@ -90,8 +93,33 @@ public class FavoriteServiceImpl implements FavoriteService{
 	}
 
 	@Override
-	public List<Video> findFavoritesByUser(String userId, int page, int size) {
-		return favoriteDAO.findFavoriteVideosByUser(userId, page, size);
+	public FavoritesResponse findFavoritesByUser(User currentUser, int page, int size) {
+		// 1. lấy dữ liệu
+		List<Video> videos = favoriteDAO.findFavoriteVideosByUser(currentUser.getId(), page, size);
+		
+		//2. lấy videoIds
+		List<String> videoIds = videos.stream()
+                .map(Video::getId)
+                .toList();
+		
+		// 3. chuẩn bị userId
+        String userId = (currentUser != null) ? currentUser.getId() : null;        
+
+        // 4. batch query
+        Map<String, Boolean> likedMap = (userId != null)
+                ? getLikedMap(userId, videoIds)
+                : Collections.emptyMap();
+        
+        Map<String, Integer> likeCountMap = countByVideoIds(videoIds);
+        Map<String, Integer> shareCountMap = shareService.countByVideoIds(videoIds);
+		
+	    long totalItems = favoriteDAO.countFavoritesByUser(currentUser.getId());
+	    
+	    int totalPages = (int) Math.ceil((double) totalItems / size);
+
+	    List<VideoDTO> dtos = mapList(videos, likedMap, likeCountMap, shareCountMap);
+
+	    return new FavoritesResponse(dtos, page, totalPages);
 	}
 
 	@Override
@@ -138,5 +166,21 @@ public class FavoriteServiceImpl implements FavoriteService{
 		}
 		return result;
 	}
+	
+	private List<VideoDTO> mapList(
+            List<Video> videos,
+            Map<String, Boolean> likedMap,
+            Map<String, Integer> likeCountMap,
+            Map<String, Integer> shareCountMap
+    ) {
+        return videos.stream()
+                .map(v -> VideoMapper.toVideoDTO(
+                        v,
+                        likedMap.getOrDefault(v.getId(), false),
+                        likeCountMap.getOrDefault(v.getId(), 0),
+                        shareCountMap.getOrDefault(v.getId(), 0)
+                ))
+                .toList();
+    }
 
 }

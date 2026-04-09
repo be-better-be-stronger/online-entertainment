@@ -20,7 +20,8 @@ package com.poly.service;
 import java.util.List;
 import java.util.Map;
 
-import com.poly.entity.Video;
+import com.poly.dto.response.FavoritesResponse;
+import com.poly.entity.User;
 
 public interface FavoriteService {
 	
@@ -45,12 +46,12 @@ public interface FavoriteService {
 	/**
 	 * Tìm danh sách video yêu thích của người dùng với phân trang.
 	 * 
-	 * @param userId ID của người dùng
+	 * @param người dùng hiện tại
 	 * @param page số trang cần lấy
 	 * @param size số lượng video trên mỗi trang
 	 * @return danh sách video yêu thích của người dùng
 	 */
-	List<Video> findFavoritesByUser(String userId, int page, int size);
+	FavoritesResponse findFavoritesByUser(User currentUser, int page, int size);
 	
 	/**
 	 * Đếm số lượng video yêu thích của người dùng.
